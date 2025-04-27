@@ -1,7 +1,7 @@
-const pool = require('../config/database');
+const db = require('../config/database');
 
 const findTenantById = async (tenantId) => {
-    const result = await pool.query('SELECT * FROM tenant WHERE id = $1', [tenantId]);
+    const result = await db.query('SELECT * FROM tenant WHERE id = $1', [tenantId]);
     return result.rows[0];
 };
 
@@ -14,14 +14,17 @@ const updateTenantById = async (tenantId, updates) => {
 
     const values = [...Object.values(updates), tenantId];
 
-    const result = await pool.query(`UPDATE tenant SET ${fields} WHERE id = $${values.length} RETURNING *`, values)
+    const result = await db.query(`UPDATE tenant SET ${fields} WHERE id = $${values.length} RETURNING *`, values)
     return result.rows[0];
 };
 
 const deleteTenantById = async (tenantId) => {
-    const result = await pool.query('DELETE FROM tenant WHERE id = $1 RETURNING *', [tenantId]);
+    const result = await db.query('DELETE FROM tenant WHERE id = $1 RETURNING *', [tenantId]);
 
     return result.rows[0];
 };
 
-module.exports = { findTenantById, updateTenantById, deleteTenantById };
+module.exports = { findTenantById,
+    updateTenantById,
+    deleteTenantById
+};

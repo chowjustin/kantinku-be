@@ -11,7 +11,7 @@ const registerUser = async (req, res) => {
 
         const newUser = await userService.register({ nama, nrp, nomor_telepon, email, password });
 
-        res.status(201).json(buildResponseSuccess("success crate user", newUser));
+        res.status(201).json(buildResponseSuccess("success create user", newUser));
     } catch (error) {
         res.status(500).json(buildResponseFailed("failed create user", error.message, null));
     }
@@ -19,6 +19,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
+        console.log('Request Body:', req.body); 
         const { email, password } = req.body;
 
         if (!email || !password) {
@@ -27,13 +28,54 @@ const loginUser = async (req, res) => {
 
         const result = await userService.login({ email, password });
 
-        res.status(200).json(buildResponseSuccess("succes login to user", result));
+        res.status(200).json(buildResponseSuccess("success login to user", result));
     } catch (error) {
         res.status(500).json(buildResponseFailed("something wrong", error.message, null));
     }
 };
 
+const getCurrentUser = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const user = await userService.getCurrentUser(userId);
+
+        return res.status(200).json(buildResponseSuccess("success get user", user));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+};
+
+const updateUser = async (req, res) => {
+    try {
+        console.log('Request Body:', req.body); // Log the request body
+        console.log('User ID:', req.userId); // Log the user ID
+
+        const userId = req.userId;
+        const updates = req.body;
+
+        const updatedUser = await userService.updateUser(userId, updates);
+
+        return res.status(200).json(buildResponseSuccess("success update user", updatedUser));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+};
+
+const deleteUser = async (req, res) => {
+    try {
+        const userId = req.userId;
+        await userService.deleteUser(userId);
+
+        return res.status(200).json(buildResponseSuccess("success delete user", null));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+};
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getCurrentUser,
+    updateUser,
+    deleteUser
 };

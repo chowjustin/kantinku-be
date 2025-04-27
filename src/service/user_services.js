@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/user_repository');
+// const { get } = require('../routes/user_routes');
 
 require('dotenv').config()
 
@@ -48,7 +49,49 @@ const login = async (userData) => {
     };
 };
 
+const getCurrentUser = async (userId) => {
+    if (!userId) throw new Error('User ID is required');
+    
+    const user = await userRepository.findUserById(userId);
+
+    if (!user) throw new Error('User not found');
+
+    return user;
+};
+
+const updateUser = async (userId, updates) => {
+    console.log('Updates in Service:', updates); // Log the updates
+    console.log('User ID in Service:', userId); // Log the user ID
+
+    const allowedFields = ['nama', 'email', 'nomor_telepon'];
+    const updateKeys = Object.keys(updates);
+
+    updateKeys.forEach(key => {
+        if (!allowedFields.includes(key)) throw new Error(`Field ${key} is not allowed to be updated`);
+    });
+
+    const updatedUser = await userRepository.updateUserById(userId, updates);
+
+    if (!updatedUser) throw new Error("Failed to update user");
+
+    return updatedUser;
+};
+
+const deleteUser = async (userId) => {
+    if (!userId) throw new Error('User ID is required');
+    
+    const deletedUser = await userRepository.deleteUserById(userId);
+
+    if (!deletedUser) throw new Error('Failed to delete user');
+
+    return deletedUser;
+};
+
+
 module.exports = {
     register,
     login,
+    getCurrentUser,
+    updateUser,
+    deleteUser
 };

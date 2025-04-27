@@ -31,7 +31,37 @@ const getUserByEmail = async (email) => {
     }
 }
 
+const findUserById = async (userId) => {
+    const result = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+    return result.rows[0];
+};
+
+const updateUserById = async (userId, updates) => {
+    console.log('Updates in Repository:', updates); // Log the updates
+    console.log('User ID in Repository:', userId); // Log the user ID
+
+    const fields = Object.keys(updates)
+        .map((key, index) => `${key} = $${index + 1}`)
+        .join(', ');
+
+    if (fields.length === 0) throw new Error('No fields to update');
+
+    const values = [...Object.values(updates), userId];
+
+    const result = await db.query(`UPDATE users SET ${fields} WHERE id = $${values.length} RETURNING *`, values)
+    return result.rows[0];
+};
+
+const deleteUserById = async (userId) => {
+    const result = await db.query('DELETE FROM users WHERE id = $1 RETURNING *', [userId]);
+
+    return result.rows[0];
+};
+
 module.exports = {
     create,
     getUserByEmail,
+    findUserById,
+    updateUserById,
+    deleteUserById
 }

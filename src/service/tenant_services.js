@@ -1,9 +1,9 @@
-const { findTenantById, updateTenantById, deleteTenantById } = require('../repositories/tenantRepository');
+const tenantRepository = require('../repositories/tenant_repository');
 
 const getCurrentTenant = async (tenantId) => {
     if (!tenantId) throw new Error('Tenant ID is required');
     
-    const tenant = await findTenantById(tenantId);
+    const tenant = await tenantRepository.findTenantById(tenantId);
 
     if (!tenant) throw new Error('Tenant not found');
 
@@ -18,7 +18,7 @@ const updateTenant = async (tenantId, updates) => {
         if (!allowedFields.includes(key)) throw new Error(`Field ${key} is not allowed to be updated`);
     });
 
-    const updatedTenant = await updateTenantById(tenantId, updates);
+    const updatedTenant = await tenantRepository.updateTenantById(tenantId, updates);
 
     if (!updatedTenant) throw new Error("Failed to update tenant");
 
@@ -28,11 +28,15 @@ const updateTenant = async (tenantId, updates) => {
 const deleteTenant = async (tenantId) => {
     if (!tenantId) throw new Error('Tenant ID is required');
     
-    const deletedTenant = await deleteTenantById(tenantId);
+    const deletedTenant = await tenantRepository.deleteTenantById(tenantId);
 
     if (!deletedTenant) throw new Error('Failed to delete tenant');
 
     return deletedTenant;
 };
 
-module.exports = { getCurrentTenant, updateTenant, deleteTenant };
+module.exports = { 
+    getCurrentTenant,
+    updateTenant,
+    deleteTenant
+};

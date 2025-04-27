@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const secretKey = process.env.JWT_SECRET;
 
 const validateToken = async (token) => {
     return new Promise((resolve, reject) => {
@@ -14,7 +15,7 @@ const validateToken = async (token) => {
 const getUserIdByToken = async (token) => {
     try {
         const decoded = await validateToken(token)
-        const userId = decoded.user_id
+        const userId = decoded.id
         return userId ? String(userId) : null
     } catch (error) {
         throw error
