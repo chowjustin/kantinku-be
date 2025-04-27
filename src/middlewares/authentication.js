@@ -15,10 +15,10 @@ const authenticate = async (req, res, next) => {
         return res.status(401).json(response);
     }
 
-    const token = authHeader.slice(7); 
+    const token = authHeader.slice(7).trim();
 
     try {
-        const decoded = await jwtService.validateToken(token);
+        const decoded = jwtService.validateToken(token);
 
         if (!decoded || typeof decoded !== 'object') {
             const response = buildResponseFailed('Failed to process request', 'Access denied', null);
@@ -31,8 +31,16 @@ const authenticate = async (req, res, next) => {
             return res.status(401).json(response);
         }
 
+        const userRole = decoded.role;
+        if (!userRole) {
+            const response = buildResponseFailed('Failed to process request', 'User Role not found in token', null);
+            return res.status(401).json(response);
+        }
+
         req.token = token;
-        req.userId = String(userId); 
+        req.userId = String(userId);
+        req.userRole = String(userRole)
+
         next();
     } catch (err) {
         const response = buildResponseFailed('Failed to process request', err.message || 'Invalid token', null);
@@ -40,5 +48,14 @@ const authenticate = async (req, res, next) => {
     }
 };
 
+const authorize = (requiredRole) => {
+    return (req, res, next) => {
+        if (req.userRole != requiredRole) {
+            const response = buildResponseFailed('Failed to process request', 'Access denied', null);
+            return res.status(403).json(response);
+        }
+        next();
+    };
+};
 
-module.exports = { authenticate }
+module.exports = { authenticate, authorize }
