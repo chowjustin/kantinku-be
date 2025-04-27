@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const pool = require('../config/database')
 
-const migrate = async () => {
+const down = async () => {
     try {
 
         const sqlPath = path.join(__dirname, 'database.down.sql');
@@ -17,4 +17,4 @@ const migrate = async () => {
     } 
 }
 
-migrate();
+down();

@@ -29,6 +29,7 @@ CREATE TABLE tenant (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     canteen_id UUID NOT NULL,
     nama VARCHAR(80) NOT NULL,
+    nama_tenant VARCHAR(80) NOT NULL,
     password CHAR(60) NOT NULL,
     email VARCHAR(254) NOT NULL UNIQUE,
     nomor_telepon VARCHAR(20) NOT NULL,
