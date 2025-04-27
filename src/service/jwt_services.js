@@ -1,20 +1,21 @@
 const jwt = require('jsonwebtoken')
+require('dotenv').config();
 
-const validateToken = async (token) => {
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, secretKey, (err, decoded) => {
-            if (err) {
-                return reject(err)
-            }
-            resolve(decoded)
-        })
-    })
-}
+const secretKey = process.env.JWT_SECRET; 
+
+const validateToken = (token) => {
+    try {
+        const decoded = jwt.verify(token, secretKey);
+        return decoded;
+    } catch (err) {
+        throw err;
+    }
+};
 
 const getUserIdByToken = async (token) => {
     try {
         const decoded = await validateToken(token)
-        const userId = decoded.user_id
+        const userId = decoded.id
         return userId ? String(userId) : null
     } catch (error) {
         throw error

@@ -1,4 +1,5 @@
 const jwtService = require('../service/jwt_services')
+const { buildResponseFailed, buildResponseSuccess } = require('../utils/response');
 require('dotenv').config()
 
 const authenticate = async (req, res, next) => {
@@ -24,7 +25,7 @@ const authenticate = async (req, res, next) => {
             return res.status(401).json(response);
         }
 
-        const userId = decoded.user_id;
+        const userId = decoded.id;
         if (!userId) {
             const response = buildResponseFailed('Failed to process request', 'User ID not found in token', null);
             return res.status(401).json(response);
