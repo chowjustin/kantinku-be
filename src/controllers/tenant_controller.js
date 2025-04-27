@@ -37,7 +37,45 @@ const loginTenant = async (req, res) => {
     }
 };
 
+const getCurrentTenant = async (req, res) => {
+    try {
+        const tenantId = req.userId;
+        const tenant = await tenantServices.getCurrentTenant(tenantId);
+
+        return res.status(200).json(buildResponseSuccess("success get tenant", tenant));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+}
+
+const updateTenant = async (req, res) => {
+    try {
+        const tenantId = req.userId;
+        const updates = req.body;
+
+        const updatedTenant = await tenantServices.updateTenant(tenantId, updates);
+
+        return res.status(200).json(buildResponseSuccess("success update tenant", updatedTenant));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+}
+
+const deleteTenant = async (req, res) => {
+    try {
+        const tenantId = req.userId;
+        await tenantServices.deleteTenant(tenantId);
+
+        return res.status(200).json(buildResponseSuccess("success delete tenant", null));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+};
+
 module.exports = {
     registerTenant,
     loginTenant,
+    getCurrentTenant,
+    updateTenant,
+    deleteTenant,
 };

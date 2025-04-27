@@ -41,5 +41,14 @@ const authenticate = async (req, res, next) => {
     }
 };
 
+const authorize = (requiredRole) => {
+    return (req, res, next) => {
+        if (req.userRole != requiredRole) {
+            const response = buildResponseFailed('Failed to process request', 'Access denied', null);
+            return res.status(403).json(response);
+        }
+        next();
+    };
+};
 
-module.exports = { authenticate }
+module.exports = { authenticate, authorize }
