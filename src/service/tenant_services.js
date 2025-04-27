@@ -1,42 +1,55 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const tenantRepository = require('../repositories/tenant_repository');
 
-const getCurrentTenant = async (tenantId) => {
-    if (!tenantId) throw new Error('Tenant ID is required');
-    
-    const tenant = await tenantRepository.findTenantById(tenantId);
+require('dotenv').config()
 
-    if (!tenant) throw new Error('Tenant not found');
+const register = async (tenantData) => {
+    const { canteen_id, nama, nama_tenant, nomor_telepon, email, password } = tenantData;
 
-    return tenant;
-};
+    const existingTenant = await tenantRepository.getTenantByEmail(email);
+    if (existingTenant) {
+        throw new Error('tenant already exists');
+    }
 
-const updateTenant = async (tenantId, updates) => {
-    const allowedFields = ['nama', 'nama_tenant', 'email', 'nomor_telepon'];
-    const updateKeys = Object.keys(updates);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    updateKeys.forEach(key => {
-        if (!allowedFields.includes(key)) throw new Error(`Field ${key} is not allowed to be updated`);
+    const newTenant = await tenantRepository.create({
+        canteen_id,
+        nama,
+        nama_tenant,
+        password: hashedPassword,
+        nomor_telepon,
+        email
     });
 
-    const updatedTenant = await tenantRepository.updateTenantById(tenantId, updates);
-
-    if (!updatedTenant) throw new Error("Failed to update tenant");
-
-    return updatedTenant;
+    return newTenant;
 };
 
-const deleteTenant = async (tenantId) => {
-    if (!tenantId) throw new Error('Tenant ID is required');
-    
-    const deletedTenant = await tenantRepository.deleteTenantById(tenantId);
+const login = async (tenantData) => {
+    const { email, password } = tenantData;
 
-    if (!deletedTenant) throw new Error('Failed to delete tenant');
+    const tenant = await tenantRepository.getTenantByEmail(email);
+    if (!tenant) {
+        throw new Error('Invalid email');
+    }
 
-    return deletedTenant;
+    const isPasswordValid = await bcrypt.compare(password, tenant.password);
+    if (!isPasswordValid) {
+        throw new Error('Invalid password');
+    }
+
+    const token = jwt.sign({ id: tenant.id, role: "tenant" }, process.env.JWT_SECRET, {
+        expiresIn: '3h',
+    });
+
+    return { 
+        token,  
+        role: "tenant"
+    };
 };
 
-module.exports = { 
-    getCurrentTenant,
-    updateTenant,
-    deleteTenant
+module.exports = {
+    register,
+    login,
 };

@@ -1,10 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const { getCurrentTenantController, updateTenantController, deleteTenantController } = require('../controllers/tenant_controller');
+const express = require("express")
+const { registerTenant, loginTenant } = require("../controllers/tenant_controller");
+const router = express.Router()
 
-// kasi middleware nanti
-router.get('/me', getCurrentTenantController);
-router.patch('/me', updateTenantController);
-router.delete('/me', deleteTenantController);
+router.post("/register", registerTenant)
+router.post("/login", loginTenant)
 
 module.exports = router;

@@ -1,30 +1,37 @@
-const db = require('../config/database');
+const db = require('../config/database'); 
 
-const findTenantById = async (tenantId) => {
-    const result = await db.query('SELECT * FROM tenant WHERE id = $1', [tenantId]);
-    return result.rows[0];
-};
+const create = async (tenantData) => {
+    const { canteen_id, nama, nama_tenant, nomor_telepon, email, password } = tenantData;
 
-const updateTenantById = async (tenantId, updates) => {
-    const fields = Object.keys(updateTenant)
-        .map((key, index) => `${key} = $${index + 1}`)
-        .join(', ');
+    const query = `
+            INSERT INTO tenant (canteen_id, nama, nama_tenant, nomor_telepon, email, password)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING id, canteen_id, nama, nama_tenant, nomor_telepon, email;
+        `;
 
-    if (fields.length === 0) throw new Error('No fields to update');
+    const values = [canteen_id, nama, nama_tenant, nomor_telepon, email, password];
 
-    const values = [...Object.values(updates), tenantId];
+    try {
+        const result = await db.query(query, values);
+        return result.rows[0];
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
 
-    const result = await db.query(`UPDATE tenant SET ${fields} WHERE id = $${values.length} RETURNING *`, values)
-    return result.rows[0];
-};
+const getTenantByEmail = async (email) => {
+    const query = `SELECT * FROM tenant WHERE email = $1;`;
+    const values = [email];
 
-const deleteTenantById = async (tenantId) => {
-    const result = await db.query('DELETE FROM tenant WHERE id = $1 RETURNING *', [tenantId]);
+    try {
+        const result = await db.query(query, values);
+        return result.rows[0];
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
 
-    return result.rows[0];
-};
-
-module.exports = { findTenantById,
-    updateTenantById,
-    deleteTenantById
-};
+module.exports = {
+    create,
+    getTenantByEmail,
+}
