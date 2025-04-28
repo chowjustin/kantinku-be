@@ -7,14 +7,14 @@ const createCanteen = async (req, res) => {
 
 
         if (!nama || !departement || !lat || !lng) {
-            return res.status(400).json(buildResponseFailed("failed parse body", "bad request body", null));
+            return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
         }
 
         const newCanteen = await canteenServices.createCanteen({ nama, departement, lat, lng });
 
-        res.status(201).json(buildResponseSuccess("success crate canteen", newCanteen));
+        res.status(201).json(buildResponseSuccess("canteen created successfully", newCanteen));
     } catch (error) {
-        res.status(500).json(buildResponseFailed("failed create canteen", error.message, null));
+        res.status(500).json(buildResponseFailed(error.message, "error creating canteen", null));
     }
 };
 

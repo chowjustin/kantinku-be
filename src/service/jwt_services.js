@@ -3,6 +3,14 @@ require('dotenv').config();
 
 const secretKey = process.env.JWT_SECRET; 
 
+const generateToken = (id, role) => {
+    const options = {
+        expiresIn: '3h',
+    };
+
+    return jwt.sign({id: id, role: role}, process.env.JWT_SECRET, options)
+}
+
 const validateToken = (token) => {
     try {
         const decoded = jwt.verify(token, secretKey);
@@ -34,6 +42,7 @@ const getRoleByToken = async (token) => {
 
 module.exports = {
     validateToken,
+    generateToken,
     getUserIdByToken,
-    getRoleByToken,
+    getRoleByToken
 }

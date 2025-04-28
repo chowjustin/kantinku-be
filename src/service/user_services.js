@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/user_repository');
+const { generateToken } = require('./jwt_services');
 // const { get } = require('../routes/user_routes');
 
 require('dotenv').config()
@@ -39,10 +39,7 @@ const login = async (userData) => {
         throw new Error('Invalid password');
     }
 
-    const token = jwt.sign({ id: user.id, role: "student" }, process.env.JWT_SECRET, {
-        expiresIn: '3h',
-    });
-
+    const token = generateToken(user.id, "student")
     return { 
         token,  
         role: "student"

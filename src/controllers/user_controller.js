@@ -6,14 +6,14 @@ const registerUser = async (req, res) => {
         const { nama, nrp, nomor_telepon, email, password } = req.body;
 
         if (!nama || !nrp || !nomor_telepon || !email || !password) {
-            return res.status(400).json(buildResponseFailed("bad request body", "failed parse body", null));
+            return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
         }
 
         const newUser = await userService.register({ nama, nrp, nomor_telepon, email, password });
 
-        res.status(201).json(buildResponseSuccess("success create user", newUser));
+        res.status(201).json(buildResponseSuccess("user created successfully", newUser));
     } catch (error) {
-        res.status(500).json(buildResponseFailed("failed create user", error.message, null));
+        res.status(500).json(buildResponseFailed(error.message, "failed create user", null));
     }
 };
 
@@ -23,14 +23,14 @@ const loginUser = async (req, res) => {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json(buildResponseFailed("bad request body", "failed parse body", null));
+            return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
         }
 
         const result = await userService.login({ email, password });
 
-        res.status(200).json(buildResponseSuccess("success login to user", result));
+        res.status(200).json(buildResponseSuccess("successfully logged in to user", result));
     } catch (error) {
-        res.status(500).json(buildResponseFailed("something wrong", error.message, null));
+        res.status(500).json(buildResponseFailed(error.message, "internal server error", null));
     }
 };
 

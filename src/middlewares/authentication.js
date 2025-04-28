@@ -32,8 +32,15 @@ const authenticate = async (req, res, next) => {
             return res.status(401).json(response);
         }
 
+        const userRole = decoded.role;
+        if (!userId) {
+            const response = buildResponseFailed('Failed to process request', 'User role not found in token', null);
+            return res.status(401).json(response);
+        }
+
         req.token = token;
         req.userId = String(userId); 
+        req.userRole = userRole
         next();
     } catch (err) {
         const response = buildResponseFailed('Failed to process request', err.message || 'Invalid token', null);
