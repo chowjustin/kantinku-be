@@ -3,17 +3,13 @@ const { buildResponseFailed, buildResponseSuccess } = require('../utils/response
 
 const registerTenant = async (req, res) => {
     try {
-        const { canteen_id, nama, nama_tenant, nomor_telepon, email, password } = req.body;
-
-        if (!canteen_id)  {
-            return res.status(400).json(buildResponseFailed("canteen ID is required", "invalid request body", null));
-        }
+        const { nama, nama_tenant, nomor_telepon, email, password } = req.body;
 
         if (!nama || !nama_tenant || !nomor_telepon || !email || !password) {
             return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
         }
 
-        const newTenant = await tenantServices.register({ canteen_id, nama, nama_tenant, nomor_telepon, email, password });
+        const newTenant = await tenantServices.register({ nama, nama_tenant, nomor_telepon, email, password });
 
         res.status(201).json(buildResponseSuccess("tenant created successfully", newTenant));
     } catch (error) {

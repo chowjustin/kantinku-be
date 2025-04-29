@@ -5,7 +5,7 @@ const {generateToken} = require('./jwt_services')
 require('dotenv').config()
 
 const register = async (tenantData) => {
-    const { canteen_id, nama, nama_tenant, nomor_telepon, email, password } = tenantData;
+    const { nama, nama_tenant, nomor_telepon, email, password } = tenantData;
 
     const existingTenant = await tenantRepository.getTenantByEmail(email);
     if (existingTenant) {
@@ -15,7 +15,6 @@ const register = async (tenantData) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newTenant = await tenantRepository.create({
-        canteen_id,
         nama,
         nama_tenant,
         password: hashedPassword,

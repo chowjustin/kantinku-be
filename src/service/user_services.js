@@ -1,16 +1,20 @@
 const bcrypt = require('bcrypt');
 const userRepository = require('../repositories/user_repository');
 const { generateToken } = require('./jwt_services');
-// const { get } = require('../routes/user_routes');
 
 require('dotenv').config()
 
 const register = async (userData) => {
     const { nama, nrp, nomor_telepon, email, password } = userData;
 
-    const existingUser = await userRepository.getUserByEmail(email);
-    if (existingUser) {
-        throw new Error('User already exists');
+    const userByEmail = await userRepository.getUserByEmail(email);
+    if (userByEmail) {
+        throw new Error('Email already exists');
+    }
+    
+    const userByNRP = await userRepository.getUserByNRP(nrp);
+    if (userByNRP) {
+        throw new Error('NRP already exists');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
