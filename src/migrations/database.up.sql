@@ -27,7 +27,7 @@ CREATE TABLE canteen (
 
 CREATE TABLE tenant (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    canteen_id UUID NOT NULL,
+    canteen_id UUID,
     nama VARCHAR(80) NOT NULL,
     nama_tenant VARCHAR(80) NOT NULL,
     password CHAR(60) NOT NULL,

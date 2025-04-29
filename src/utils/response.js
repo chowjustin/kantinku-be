@@ -2,7 +2,6 @@ const buildResponseSuccess = (message, data) => {
     return {
         status: true,
         message: message,
-        error: null,
         data: data,
         meta: null
     };

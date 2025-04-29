@@ -13,6 +13,18 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+app.use((req, res, next) => {
+    req.time = new Date(Date.now()).toString();
+
+    res.on('finish', () => {
+        console.log(
+            `${req.method} ${req.hostname}${req.path} [${res.statusCode}] ${req.time}`
+        );
+    });
+
+    next();
+});
+
 app.use('/tenant', tenantRoutes)
 app.use('/user', userRoutes)
 app.use('/canteen', canteenRoutes)

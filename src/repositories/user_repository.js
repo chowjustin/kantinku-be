@@ -31,6 +31,19 @@ const getUserByEmail = async (email) => {
     }
 }
 
+const getUserByNRP = async (nrp) => {
+    const query = `SELECT * FROM users WHERE nrp = $1;`;
+    const values = [nrp];
+
+    try {
+        const result = await db.query(query, values);
+        return result.rows[0];
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+
 const findUserById = async (userId) => {
     const result = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
     return result.rows[0];
@@ -58,6 +71,7 @@ const deleteUserById = async (userId) => {
 module.exports = {
     create,
     getUserByEmail,
+    getUserByNRP,
     findUserById,
     updateUserById,
     deleteUserById

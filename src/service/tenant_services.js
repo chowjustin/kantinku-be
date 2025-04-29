@@ -1,11 +1,11 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const tenantRepository = require('../repositories/tenant_repository');
+const {generateToken} = require('./jwt_services')
 
 require('dotenv').config()
 
 const register = async (tenantData) => {
-    const { canteen_id, nama, nama_tenant, nomor_telepon, email, password } = tenantData;
+    const { nama, nama_tenant, nomor_telepon, email, password } = tenantData;
 
     const existingTenant = await tenantRepository.getTenantByEmail(email);
     if (existingTenant) {
@@ -15,7 +15,6 @@ const register = async (tenantData) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newTenant = await tenantRepository.create({
-        canteen_id,
         nama,
         nama_tenant,
         password: hashedPassword,
@@ -39,10 +38,7 @@ const login = async (tenantData) => {
         throw new Error('Invalid password');
     }
 
-    const token = jwt.sign({ id: tenant.id, role: "tenant" }, process.env.JWT_SECRET, {
-        expiresIn: '3h',
-    });
-
+    const token = generateToken(tenant.id, "tenant")
     return { 
         token,  
         role: "tenant"

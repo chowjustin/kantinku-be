@@ -1,16 +1,20 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/user_repository');
-// const { get } = require('../routes/user_routes');
+const { generateToken } = require('./jwt_services');
 
 require('dotenv').config()
 
 const register = async (userData) => {
     const { nama, nrp, nomor_telepon, email, password } = userData;
 
-    const existingUser = await userRepository.getUserByEmail(email);
-    if (existingUser) {
-        throw new Error('User already exists');
+    const userByEmail = await userRepository.getUserByEmail(email);
+    if (userByEmail) {
+        throw new Error('Email already exists');
+    }
+    
+    const userByNRP = await userRepository.getUserByNRP(nrp);
+    if (userByNRP) {
+        throw new Error('NRP already exists');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -39,10 +43,7 @@ const login = async (userData) => {
         throw new Error('Invalid password');
     }
 
-    const token = jwt.sign({ id: user.id, role: "student" }, process.env.JWT_SECRET, {
-        expiresIn: '3h',
-    });
-
+    const token = generateToken(user.id, "student")
     return { 
         token,  
         role: "student"
