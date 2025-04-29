@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.post('', authenticate, authorize("tenant"), createCanteen);
 
-router.get('/all', authenticate, authorize("tenant"), getAllCanteens);
+router.get('/all', getAllCanteens);
 
 module.exports = router;
