@@ -25,6 +25,10 @@ app.use((req, res, next) => {
     next();
 });
 
+app.get('/ping', (req, res) => {
+    res.status(200).json('pong');
+});
+
 app.use('/tenant', tenantRoutes)
 app.use('/user', userRoutes)
 app.use('/canteen', canteenRoutes)
