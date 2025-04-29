@@ -36,8 +36,15 @@ const getCanteenByLatandLng = async (lat, lng) => {
     }
 }
 
+const getAllCanteens = async () => {
+    const result = await db.query('SELECT * FROM canteen');
+
+    return result.rows;
+}
+
 
 module.exports = {
     create,
-    getCanteenByLatandLng
+    getCanteenByLatandLng,
+    getAllCanteens
 }

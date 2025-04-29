@@ -18,6 +18,17 @@ const createCanteen = async (req, res) => {
     }
 };
 
+const getAllCanteens = async (req, res) => {
+    try {
+        const canteens = await canteenServices.getAllCanteens();
+
+        return res.status(200).json(buildResponseSuccess("success get all canteens", canteens));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+}
+
 module.exports = {
-    createCanteen
+    createCanteen,
+    getAllCanteens
 }

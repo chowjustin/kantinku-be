@@ -55,10 +55,17 @@ const deleteTenantById = async (tenantId) => {
     return result.rows[0];
 };
 
+const selectCanteenById = async (tenantId, canteenId) => {
+    const result = await db.query('UPDATE tenant SET canteen_id = $1 WHERE id = $2 RETURNING *', [canteenId, tenantId]);
+
+    return result.rows[0];
+}
+
 module.exports = {
     create,
     getTenantByEmail,
     findTenantById,
     updateTenantById,
-    deleteTenantById
+    deleteTenantById,
+    selectCanteenById
 }

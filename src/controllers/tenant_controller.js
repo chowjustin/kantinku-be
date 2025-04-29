@@ -68,10 +68,26 @@ const deleteTenant = async (req, res) => {
     }
 };
 
+const selectCanteen = async (req, res) => {
+    try {
+        const tenantId = req.userId;
+        const { canteenId } = req.body;
+
+        if (!canteenId) return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
+
+        const updatedTenant = await tenantServices.selectCanteen(tenantId, canteenId);
+
+        return res.status(200).json(buildResponseSuccess("success update tenant", updatedTenant));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+}
+
 module.exports = {
     registerTenant,
     loginTenant,
     getCurrentTenant,
     updateTenant,
     deleteTenant,
+    selectCanteen
 };

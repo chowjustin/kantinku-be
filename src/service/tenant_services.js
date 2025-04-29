@@ -80,10 +80,21 @@ const deleteTenant = async (tenantId) => {
     return deletedTenant;
 };
 
+const selectCanteen = async (tenantId, canteenId) => {
+    if (!tenantId) throw new Error('Tenant ID is required');
+
+    const updatedTenant = await tenantRepository.selectCanteenById(tenantId, canteenId);
+
+    if (!updatedTenant) throw new Error('Failed to select canteen');
+
+    return updatedTenant;
+};
+
 module.exports = {
     register,
     login,
     getCurrentTenant,
     updateTenant,
-    deleteTenant
+    deleteTenant,
+    selectCanteen
 };
