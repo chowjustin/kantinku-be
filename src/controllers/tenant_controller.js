@@ -48,6 +48,12 @@ const getCurrentTenant = async (req, res) => {
 const updateTenant = async (req, res) => {
     try {
         const tenantId = req.userId;
+        const { nama, nama_tenant, nomor_telepon, email, password } = req.body;
+
+        if (!nama || !nama_tenant || !nomor_telepon || !email || !password) {
+            return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
+        }
+
         const updates = req.body;
 
         const updatedTenant = await tenantServices.updateTenant(tenantId, updates);

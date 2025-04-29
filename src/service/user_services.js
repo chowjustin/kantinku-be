@@ -61,12 +61,14 @@ const getCurrentUser = async (userId) => {
 };
 
 const updateUser = async (userId, updates) => {
-    const allowedFields = ['nama', 'email', 'nomor_telepon'];
+    const allowedFields = ['nama', 'email', 'nomor_telepon', 'password'];
     const updateKeys = Object.keys(updates);
 
     updateKeys.forEach(key => {
         if (!allowedFields.includes(key)) throw new Error(`Field ${key} is not allowed to be updated`);
     });
+
+    updates.password = await bcrypt.hash(updates.password, 10);
 
     const updatedUser = await userRepository.updateUserById(userId, updates);
 

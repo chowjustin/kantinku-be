@@ -48,6 +48,12 @@ const getCurrentUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const userId = req.userId;
+        const { nama, nomor_telepon, email, password } = req.body;
+
+        if (!nama || !nomor_telepon || !email || !password) {
+            return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
+        }
+
         const updates = req.body;
 
         const updatedUser = await userService.updateUser(userId, updates);

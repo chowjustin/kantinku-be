@@ -56,12 +56,14 @@ const getCurrentTenant = async (tenantId) => {
 };
 
 const updateTenant = async (tenantId, updates) => {
-    const allowedFields = ['nama', 'nama_tenant', 'email', 'nomor_telepon'];
+    const allowedFields = ['nama', 'nama_tenant', 'email', 'nomor_telepon', 'password'];
     const updateKeys = Object.keys(updates);
 
     updateKeys.forEach(key => {
         if (!allowedFields.includes(key)) throw new Error(`Field ${key} is not allowed to be updated`);
     });
+
+    updates.password = await bcrypt.hash(updates.password, 10);
 
     const updatedTenant = await tenantRepository.updateTenantById(tenantId, updates);
 
