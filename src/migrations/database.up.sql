@@ -38,3 +38,15 @@ CREATE TABLE tenant (
 
     FOREIGN KEY (canteen_id) REFERENCES canteen(id) ON DELETE CASCADE
 );
+
+CREATE TABLE menus (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID NOT NULL,
+    nama VARCHAR(80) NOT NULL,
+    deskripsi TEXT NOT NULL,
+    harga INTEGER NOT NULL,
+    stok INTEGER NOT NULL,
+    image_url VARCHAR(50) NULL,
+    
+    FOREIGN KEY (tenant_id) REFERENCES tenant(id) ON DELETE CASCADE
+);
