@@ -37,6 +37,7 @@ const getCurrentUser = async (req, res) => {
     try {
         const userId = req.userId;
         const user = await userService.getCurrentUser(userId);
+        user.role = req.userRole;
 
         return res.status(200).json(buildResponseSuccess("success get user", user));
     } catch (error) {

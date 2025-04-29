@@ -37,6 +37,7 @@ const getCurrentTenant = async (req, res) => {
     try {
         const tenantId = req.userId;
         const tenant = await tenantServices.getCurrentTenant(tenantId);
+        tenant.role = req.userRole;
 
         return res.status(200).json(buildResponseSuccess("success get tenant", tenant));
     } catch (error) {
