@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/ping', (req, res) => {
-    res.status(200).json('pong');
+    return res.status(200).json({ message: 'pong' });
 });
 
 app.use('/tenant', tenantRoutes)
