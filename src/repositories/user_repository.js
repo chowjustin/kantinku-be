@@ -37,9 +37,6 @@ const findUserById = async (userId) => {
 };
 
 const updateUserById = async (userId, updates) => {
-    console.log('Updates in Repository:', updates); // Log the updates
-    console.log('User ID in Repository:', userId); // Log the user ID
-
     const fields = Object.keys(updates)
         .map((key, index) => `${key} = $${index + 1}`)
         .join(', ');

@@ -19,7 +19,6 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        console.log('Request Body:', req.body); 
         const { email, password } = req.body;
 
         if (!email || !password) {
@@ -47,9 +46,6 @@ const getCurrentUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        console.log('Request Body:', req.body); // Log the request body
-        console.log('User ID:', req.userId); // Log the user ID
-
         const userId = req.userId;
         const updates = req.body;
 

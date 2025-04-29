@@ -60,9 +60,6 @@ const getCurrentUser = async (userId) => {
 };
 
 const updateUser = async (userId, updates) => {
-    console.log('Updates in Service:', updates); // Log the updates
-    console.log('User ID in Service:', userId); // Log the user ID
-
     const allowedFields = ['nama', 'email', 'nomor_telepon'];
     const updateKeys = Object.keys(updates);
 
