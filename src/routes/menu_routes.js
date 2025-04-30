@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get('', authenticate, authorize("tenant"), menuController.getAllMenu)
 router.post('', authenticate, authorize("tenant"), menuController.createMenu)
+router.get('/:id', menuController.getMenuById);
 router.patch('/:id', authenticate, authorize("tenant"), menuController.updateMenu)
 router.delete('/:id', authenticate, authorize("tenant"), menuController.deleteMenu)
 

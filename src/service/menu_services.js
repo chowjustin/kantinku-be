@@ -1,14 +1,14 @@
-const menuReposiotry = require('../repositories/menu_repository')
+const menuRepository = require('../repositories/menu_repository')
 
 const createMenu = async (tenantId, menuData) => {
     const {nama, deskripsi, harga, stok} = menuData;
 
-    const tenantMenu = await menuReposiotry.checkTenantMenu(tenantId, nama)
+    const tenantMenu = await menuRepository.checkTenantMenu(tenantId, nama)
     if (tenantMenu) {
         throw new Error('Same menu name already exist in you menu')
     }
 
-    const newMenu = await menuReposiotry.create({
+    const newMenu = await menuRepository.create({
         tenantId, 
         nama,
         deskripsi,
@@ -20,7 +20,7 @@ const createMenu = async (tenantId, menuData) => {
 }
 
 const getMenu = async (tenantId) => {
-    const tenantMenu = await menuReposiotry.getMenuByTenantId(tenantId);   
+    const tenantMenu = await menuRepository.getMenuByTenantId(tenantId);   
     return tenantMenu
 } 
 
@@ -32,19 +32,28 @@ const updateMenu = async (tenantId, menuId, updates) => {
         if (!allowedFields.includes(key)) throw new Error(`Field ${key} is not allowed to be updated`);
     });
 
-    const updatedMenu = await menuReposiotry.updateMenuByTenantId(tenantId, menuId, updates)
+    const updatedMenu = await menuRepository.updateMenuByTenantId(tenantId, menuId, updates)
     
     return updatedMenu
 }
 
 const deleteMenu = async(tenantId, menuId) => {
-    const deletedMenu = await menuReposiotry.deleteMenuByTenantId(tenantId, menuId)
+    const deletedMenu = await menuRepository.deleteMenuByTenantId(tenantId, menuId)
     return deletedMenu
+}
+
+const getMenuById = async (menuId) => {
+    if (!menuId) throw new Error('Menu ID is required');
+    const menu = await menuRepository.getMenuById(menuId);
+
+    if (!menu) throw new Error('Menu not found');
+    return menu;
 }
 
 module.exports = {
     createMenu,
     updateMenu,
     getMenu,
-    deleteMenu
+    deleteMenu,
+    getMenuById
 }

@@ -73,9 +73,22 @@ const getAllMenu = async (req, res) => {
     }
 }
 
+const getMenuById = async (req, res) => {
+    try {
+        const menuId = req.params.id;
+        if (!menuId) return res.status(400).json(buildResponseFailed("missing menu ID", "invalid request", null));
+        const menu = await menuServices.getMenuById(menuId);
+
+        return res.status(200).json(buildResponseSuccess("succes get menu by id", menu));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("failed to get menu by id", error.message, null));
+    }
+}
+
 module.exports = {
     createMenu,
     updateMenu,
     deleteMenu,
-    getAllMenu
+    getAllMenu,
+    getMenuById
 }

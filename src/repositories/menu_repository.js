@@ -97,10 +97,21 @@ const updateMenuByTenantId = async (tenantId, menuId, updates) => {
     }
 }
 
+const getMenuById = async (menuId) => {
+    try {
+        const result = await db.query('SELECT * FROM menus WHERE id = $1', [menuId]);
+
+        return result.rows[0];
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 module.exports = {
     create,
     updateMenuByTenantId,
     deleteMenuByTenantId,
     getMenuByTenantId,
     checkTenantMenu,
+    getMenuById
 }
