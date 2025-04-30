@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const tenantRepository = require('../repositories/tenant_repository');
+const menuRepository = require('../repositories/menu_repository');
 const {generateToken} = require('./jwt_services')
 
 require('dotenv').config()
@@ -56,6 +57,20 @@ const getCurrentTenant = async (tenantId) => {
     return tenant;
 };
 
+const getTenantById = async (tenantId) => {
+    const tenant = await tenantRepository.findTenantById(tenantId);
+
+    if (!tenant) throw new Error('Tenant not found');
+    
+    const menus = await menuRepository.getMenuByTenantId(tenantId);
+    
+
+    return {
+        ...tenant,
+        menus
+    };
+};
+
 const updateTenant = async (tenantId, updates) => {
     const allowedFields = ['nama', 'nama_tenant', 'email', 'nomor_telepon', 'password'];
     const updateKeys = Object.keys(updates);
@@ -97,6 +112,7 @@ module.exports = {
     register,
     login,
     getCurrentTenant,
+    getTenantById,
     updateTenant,
     deleteTenant,
     selectCanteen

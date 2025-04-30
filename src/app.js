@@ -6,6 +6,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/user_routes')
 const tenantRoutes = require('./routes/tenant_routes')
 const canteenRoutes = require('./routes/canteen_routes')
+const menuRoutes = require('./routes/menu_routes')
 
 dotenv.config()
 
@@ -35,5 +36,6 @@ app.get('/ping', (req, res) => {
 app.use('/tenant', tenantRoutes)
 app.use('/user', userRoutes)
 app.use('/canteen', canteenRoutes)
+app.use('/menu', menuRoutes)
 
 module.exports = app

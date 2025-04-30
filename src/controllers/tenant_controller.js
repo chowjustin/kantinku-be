@@ -45,6 +45,21 @@ const getCurrentTenant = async (req, res) => {
     }
 }
 
+const getTenant = async (req, res) => {
+    try {
+        const tenantId = req.params.id;
+        const tenant = await tenantServices.getTenantById(tenantId);
+
+        if (!tenant) {
+            return res.status(404).json(buildResponseFailed("tenant not found", "failed get menu", null));
+        }
+
+        return res.status(200).json(buildResponseSuccess("success get tenant", tenant));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+}
+
 const updateTenant = async (req, res) => {
     try {
         const tenantId = req.userId;
@@ -94,7 +109,8 @@ module.exports = {
     registerTenant,
     loginTenant,
     getCurrentTenant,
+    getTenant,
     updateTenant,
     deleteTenant,
-    selectCanteen
+    selectCanteen,
 };

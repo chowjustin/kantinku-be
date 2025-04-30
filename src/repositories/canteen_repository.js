@@ -4,10 +4,10 @@ const create = async (canteenData) => {
     const { nama, departement, lat, lng } = canteenData;
 
     const query = `
-            INSERT INTO canteen (nama, departement, latitude, longitude)
-            VALUES ($1, $2, $3, $4)
-            RETURNING id, nama, latitude, longitude;
-        `;
+        INSERT INTO canteen (nama, departement, latitude, longitude)
+        VALUES ($1, $2, $3, $4)
+        RETURNING id, nama, latitude, longitude;
+    `;
 
     const values = [nama, departement, lat, lng];
 
