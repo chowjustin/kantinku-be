@@ -1,7 +1,7 @@
 const menuRepository = require('../repositories/menu_repository')
 
 const createMenu = async (tenantId, menuData) => {
-    const {nama, deskripsi, harga, stok} = menuData;
+    const {nama, deskripsi, harga, stok, image_url} = menuData;
 
     const tenantMenu = await menuRepository.checkTenantMenu(tenantId, nama)
     if (tenantMenu) {
@@ -13,7 +13,8 @@ const createMenu = async (tenantId, menuData) => {
         nama,
         deskripsi,
         harga,
-        stok
+        stok,
+        image_url
     })
 
     return newMenu
@@ -48,12 +49,22 @@ const getMenuById = async (menuId) => {
 
     if (!menu) throw new Error('Menu not found');
     return menu;
-}
+};
+
+const getImageById = async (menuId) => {
+    if (!menuId) throw new Error('Menu ID is required');
+
+    const image = await menuRepository.getImageById(menuId);
+    if (!image) throw new Error('Image not found');
+
+    return image;
+};
 
 module.exports = {
     createMenu,
     updateMenu,
     getMenu,
     deleteMenu,
-    getMenuById
+    getMenuById,
+    getImageById
 }

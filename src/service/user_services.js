@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const userRepository = require('../repositories/user_repository');
+const { getOrdersByUserId } = require('../repositories/order_repository');
 const { generateToken } = require('./jwt_services');
 
 require('dotenv').config()
@@ -87,11 +88,21 @@ const deleteUser = async (userId) => {
     return deletedUser;
 };
 
+const getUserOrders = async (userId) => {
+    if (!userId) throw new Error('User ID is required');
+
+    const orders = await getOrdersByUserId(userId);
+
+    if (!orders) throw new Error('Orders not found');
+
+    return orders;
+}
 
 module.exports = {
     register,
     login,
     getCurrentUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserOrders
 };

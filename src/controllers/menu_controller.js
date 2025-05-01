@@ -4,10 +4,15 @@ const { buildResponseFailed, buildResponseSuccess } = require('../utils/response
 const createMenu = async (req, res) => {
     try {
         const tenantId = req.userId
-        const { nama, deskripsi, harga, stok, image_url } = req.body
+        const { nama, deskripsi, harga, stok } = req.body
 
         if (!nama || !deskripsi || !harga || !stok) {
             return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
+        }
+
+        let image_url = null;
+        if (req.file) {
+            image_url = `/uploads/${req.file.filename}`;
         }
 
         const newMenu = await menuServices.createMenu(tenantId, { nama, deskripsi, harga, stok, image_url })
@@ -25,10 +30,15 @@ const updateMenu = async (req, res) => {
     try {
         const tenantId = req.userId;
         const menuId = req.params.id;
-        const { nama, deskripsi, harga, stok, image_url } = req.body;
+        const { nama, deskripsi, harga, stok } = req.body;
 
-        if (!menuId || !nama || !deskripsi || !harga || !stok || !image_url) {
+        if (!menuId || !nama || !deskripsi || !harga || !stok) {
             return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
+        }
+
+        let image_url = null;
+        if (req.file) {
+            image_url = `/uploads/${req.file.filename}`;
         }
 
         const updatedMenu = await menuServices.updateMenu(tenantId, menuId, { nama, deskripsi, harga, stok, image_url });
@@ -83,12 +93,12 @@ const getMenuById = async (req, res) => {
     } catch (error) {
         return res.status(500).json(buildResponseFailed("failed to get menu by id", error.message, null));
     }
-}
+};
 
 module.exports = {
     createMenu,
     updateMenu,
     deleteMenu,
     getAllMenu,
-    getMenuById
+    getMenuById,
 }

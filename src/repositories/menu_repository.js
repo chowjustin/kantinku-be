@@ -1,15 +1,15 @@
 const db = require('../config/database');
 
 const create = async (menuData) => {
-    const { tenantId, nama, deskripsi, harga, stok } = menuData
+    const { tenantId, nama, deskripsi, harga, stok, image_url } = menuData
 
     const query = `
-        INSERT INTO menus (tenant_id, nama, deskripsi, harga, stok)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO menus (tenant_id, nama, deskripsi, harga, stok, image_url)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id, nama, image_url, deskripsi, harga, stok;
     `
 
-    const values = [tenantId, nama, deskripsi, harga, stok]
+    const values = [tenantId, nama, deskripsi, harga, stok, image_url]
 
     try {
         const result = await db.query(query, values);

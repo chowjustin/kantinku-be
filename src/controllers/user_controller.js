@@ -75,10 +75,24 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const getUserOrders = async (req, res) => {
+    try {
+        const userId = req.userId;
+        if (!userId) return res.status(400).json(buildResponseFailed("missing user ID", "invalid request", null));
+        const orders = await userService.getUserOrders(userId);
+        if (!orders) return res.status(404).json(buildResponseFailed("orders not found", "failed to get orders". null));
+
+        return res.status(200).json(buildResponseSuccess("success get orders", orders));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));        
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
     getCurrentUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserOrders
 };

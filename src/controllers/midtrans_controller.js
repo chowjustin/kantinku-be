@@ -3,6 +3,8 @@ import { buildResponseFailed, buildResponseSuccess } from "../utils/response";
 const { getMenuById } = require("../service/menu_services");
 require('dotenv').config();
 
+// unfinished, need a way to order_id from user
+
 const midtransClient = new Midtrans.Snap({
     isProduction: false,
     serverKey: process.env.MIDTRANS_SECRET
@@ -10,7 +12,6 @@ const midtransClient = new Midtrans.Snap({
 
 const getToken = async (req, res) => {
     try {
-        // Diasumsikan order_id ada di req.body kalo gak harus ambil pake id user di database
         const { order_id, id_menu, quantity } = req.body;
         const menu = await getMenuById(id_menu);
 
