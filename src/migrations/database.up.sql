@@ -4,6 +4,14 @@ DROP TABLE IF EXISTS tenant;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS canteen;
 DROP TABLE IF EXISTS menus;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS order_item;
+DROP TYPE IF EXISTS status_order;
+DROP TYPE IF EXISTS status_payment;
+
+CREATE TYPE status_order AS ENUM ('Menunggu', 'Diproses', 'Ditolak', 'Siap Diambil', 'Selesai');
+CREATE TYPE status_payment AS ENUM ('Unpaid', 'Paid');
+
 
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -50,4 +58,28 @@ CREATE TABLE menus (
     image_url VARCHAR(50) NULL,
     
     FOREIGN KEY (tenant_id) REFERENCES tenant(id) ON DELETE CASCADE
+);
+
+CREATE TABLE orders (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id UUID NOT NULL,
+    tenant_id UUID NOT NULL,
+    order_status status_order NOT NULL DEFAULT 'Menunggu',
+    payment_status status_payment NOT NULL DEFAULT 'Unpaid',
+
+    payment_link TEXT NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+ 
+    processed_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE order_item (
+    order_id INTEGER NOT NULL,
+    menu_id UUID NOT NULL,
+    quantity INTEGER NOT NULL,
+
+    PRIMARY KEY (order_id, menu_id),
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (menu_id) REFERENCES menus(id)
 );
