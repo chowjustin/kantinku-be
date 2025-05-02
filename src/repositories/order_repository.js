@@ -44,17 +44,17 @@ const create = async (orders) => {
     }
 }
 
-const updateById = async (orderId, updates) => {
+const updateById = async (userId, orderId, updates) => {
     const fields = Object.keys(updates).map((key, index) => `${key} = $${index + 1}`).join(', ');
 
     if (fields.length === 0) throw new Error('No fields to update');
 
-    const values = [...Object.values(updates), orderId];
+    const values = [...Object.values(updates), orderId, userId];
 
     const query = `
         UPDATE orders 
         SET ${fields} 
-        WHERE id = $${values.length} 
+        WHERE id = $${values.length - 1} AND user_id = $${values.length}
         RETURNING id, tenant_id, order_status, payment_status, token, expires_at;
     `;
 
