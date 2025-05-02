@@ -10,13 +10,12 @@ const createMenu = async (req, res) => {
             return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
         }
 
-        // let image_url = null;
-        // if (req.file) {
-        //     image_url = `/uploads/${req.file.filename}`;
-        // }
+        console.log("Uploaded file:", req.file);
 
-        // const newMenu = await menuServices.createMenu(tenantId, { nama, deskripsi, harga, stok, image_url });
-        const newMenu = await menuServices.createMenu(tenantId, { nama, deskripsi, harga, stok });
+        const image_url = req.file?.path;
+
+        const newMenu = await menuServices.createMenu(tenantId, { nama, deskripsi, harga, stok, image_url });
+        // const newMenu = await menuServices.createMenu(tenantId, { nama, deskripsi, harga, stok });
         if (!newMenu) {
             return res.status(404).json(buildResponseFailed("menu not found", "failed create menu", null));
         }
@@ -37,13 +36,10 @@ const updateMenu = async (req, res) => {
             return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
         }
 
-        // let image_url = null;
-        // if (req.file) {
-        //     image_url = `/uploads/${req.file.filename}`;
-        // }
+        const image_url = req.file?.path;
 
-        // const updatedMenu = await menuServices.updateMenu(tenantId, menuId, { nama, deskripsi, harga, stok, image_url });
-        const updatedMenu = await menuServices.updateMenu(tenantId, menuId, { nama, deskripsi, harga, stok });
+        const updatedMenu = await menuServices.updateMenu(tenantId, menuId, { nama, deskripsi, harga, stok, image_url });
+        // const updatedMenu = await menuServices.updateMenu(tenantId, menuId, { nama, deskripsi, harga, stok });
         if (!updatedMenu) {
             return res.status(404).json(buildResponseFailed("menu not found", "failed update menu", null));
         }

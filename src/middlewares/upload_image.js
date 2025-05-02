@@ -1,14 +1,23 @@
-// const multer = require('multer');
-// const path = require('path');
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 
-// const storage = multer.diskStorage({
-//     destination: './uploads/',
-//     filename: (req, file, cb) => {
-//       const ext = path.extname(file.originalname);
-//       cb(null, Date.now() + ext);
-//     }
-// });
+require('dotenv').config();
 
-// const upload = multer({ storage });
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-// module.exports = upload;
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    asset_folder: 'restaurant_menu',
+    allowed_formats: ['jpg', 'png', 'jpeg'],
+  },
+});
+
+const upload = multer({ storage });
+
+module.exports = upload;

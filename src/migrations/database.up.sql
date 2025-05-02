@@ -55,7 +55,7 @@ CREATE TABLE menus (
     deskripsi TEXT NOT NULL,
     harga INTEGER NOT NULL,
     stok INTEGER NOT NULL,
-    image_url VARCHAR(50) NULL,
+    image_url TEXT NULL,
     
     FOREIGN KEY (tenant_id) REFERENCES tenant(id) ON DELETE CASCADE
 );
