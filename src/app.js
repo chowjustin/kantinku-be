@@ -35,7 +35,7 @@ app.get('/ping', (req, res) => {
     return res.status(200).json({ message: 'pong' });
 });
 
-app.use('/uploads', express.static('uploads'));
+// app.use('/uploads', express.static('uploads'));
 app.use('/tenant', tenantRoutes)
 app.use('/user', userRoutes)
 app.use('/canteen', canteenRoutes)

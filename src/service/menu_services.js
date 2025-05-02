@@ -1,7 +1,8 @@
 const menuRepository = require('../repositories/menu_repository')
 
 const createMenu = async (tenantId, menuData) => {
-    const {nama, deskripsi, harga, stok, image_url} = menuData;
+    // const {nama, deskripsi, harga, stok, image_url} = menuData;
+    const {nama, deskripsi, harga, stok} = menuData;
 
     const tenantMenu = await menuRepository.checkTenantMenu(tenantId, nama)
     if (tenantMenu) {
@@ -14,7 +15,7 @@ const createMenu = async (tenantId, menuData) => {
         deskripsi,
         harga,
         stok,
-        image_url
+        // image_url
     })
 
     return newMenu
@@ -26,7 +27,8 @@ const getMenu = async (tenantId) => {
 } 
 
 const updateMenu = async (tenantId, menuId, updates) => {
-    const allowedFields = ['nama', 'deskripsi', 'image_url', 'harga', 'stok'];
+    // const allowedFields = ['nama', 'deskripsi', 'image_url', 'harga', 'stok'];
+    const allowedFields = ['nama', 'deskripsi', 'harga', 'stok'];
     const updateKeys = Object.keys(updates);
 
     updateKeys.forEach(key => {
