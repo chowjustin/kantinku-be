@@ -66,10 +66,8 @@ CREATE TABLE orders (
     tenant_id UUID NOT NULL,
     order_status status_order NOT NULL DEFAULT 'Menunggu',
     payment_status status_payment NOT NULL DEFAULT 'Unpaid',
-
-    payment_link TEXT NOT NULL,
-    expires_at TIMESTAMP NOT NULL,
- 
+    token VARCHAR(255),
+    expires_at TIMESTAMP,
     processed_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );

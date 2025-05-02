@@ -7,6 +7,7 @@ const userRoutes = require('./routes/user_routes')
 const tenantRoutes = require('./routes/tenant_routes')
 const canteenRoutes = require('./routes/canteen_routes')
 const menuRoutes = require('./routes/menu_routes')
+const orderRoutes = require('./routes/order_routes')
 
 dotenv.config()
 
@@ -38,5 +39,6 @@ app.use('/tenant', tenantRoutes)
 app.use('/user', userRoutes)
 app.use('/canteen', canteenRoutes)
 app.use('/menu', menuRoutes)
+app.use('/order', orderRoutes)
 
 module.exports = app

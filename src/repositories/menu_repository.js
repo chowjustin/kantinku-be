@@ -107,11 +107,29 @@ const getMenuById = async (menuId) => {
     }
 }
 
+const getMenuByIds = async (menuIds) => {
+    if (menuIds.length === 0) {
+        return []
+    }
+
+    try {
+        const placeholders = menuIds.map((_, i) => `$${i + 1}`).join(', ');
+        const query = `SELECT id, tenant_id, nama, harga, stok FROM menus WHERE id IN (${placeholders})`;
+
+        const result = await db.query(query, menuIds); 
+
+        return result.rows
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
+
 module.exports = {
     create,
     updateMenuByTenantId,
     deleteMenuByTenantId,
     getMenuByTenantId,
     checkTenantMenu,
-    getMenuById
+    getMenuById,
+    getMenuByIds
 }
