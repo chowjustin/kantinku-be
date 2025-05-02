@@ -32,7 +32,7 @@ const getTenantByEmail = async (email) => {
 }
 
 const findTenantById = async (tenantId) => {
-    const result = await db.query('SELECT * FROM tenant WHERE id = $1', [tenantId]);
+    const result = await db.query('SELECT id, canteen_id, nama, nama_tenant, email, nomor_telepon, created_at FROM tenant WHERE id = $1', [tenantId]);
     return result.rows[0];
 };
 

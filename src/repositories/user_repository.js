@@ -45,7 +45,7 @@ const getUserByNRP = async (nrp) => {
 
 
 const findUserById = async (userId) => {
-    const result = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+    const result = await db.query('SELECT id, nama, email, nomor_telepon, nrp, created_at FROM users WHERE id = $1', [userId]);
     return result.rows[0];
 };
 
