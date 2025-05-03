@@ -12,7 +12,7 @@ const expiry = {
     duration: 60
 }
 
-const redirect_url = process.env.MIDTRANS_URL
+const redirect_url = "https://app.sandbox.midtrans.com/snap/v2/vtweb/"
 
 module.exports = { 
     snap, 

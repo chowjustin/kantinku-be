@@ -17,6 +17,20 @@ const checkout = async (req, res) =>  {
     }
 }
 
+const getOrders = async (req, res) => {
+    try {
+        const userId = req.userId
+        const role = req.userRole
+        const orderStatus = req.query.order_status
+        const paymentStatus = req.query.payment_status
+        
+        const orders = await orderServices.getOrders(userId, role, orderStatus, paymentStatus)
+        return res.status(200).json(buildResponseSuccess("successfully get orders", orders));
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+}
+
 const createOrderAndCheckout = async (req, res) => {
     try {
         const userId = req.userId
@@ -86,6 +100,7 @@ module.exports = {
     createOrderAndCheckout,
     checkout,
     getOrder,
+    getOrders,
     deleteOrder,
     updateOrder,
 }
