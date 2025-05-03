@@ -9,6 +9,7 @@ const canteenRoutes = require('./routes/canteen_routes')
 const menuRoutes = require('./routes/menu_routes')
 const orderRoutes = require('./routes/order_routes')
 const orderItemRoutes = require('./routes/order_item_routes')
+const midtransRoutes = require('./routes/midtrans_routes')
 
 dotenv.config()
 
@@ -42,5 +43,6 @@ app.use('/canteen', canteenRoutes)
 app.use('/menu', menuRoutes)
 app.use('/order', orderRoutes)
 app.use('/order-item', orderItemRoutes )
+app.use('/midtrans', midtransRoutes)
 
 module.exports = app
