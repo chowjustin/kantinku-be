@@ -3,7 +3,6 @@ const moment = require('moment-timezone');
 
 const getToken = async (orderId, totalCost, item_details) => {
     midtrans.expiry.start_time = moment().tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss Z")
-    
     const parameter = {
         transaction_details: {
             order_id: orderId,

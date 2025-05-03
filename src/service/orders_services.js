@@ -51,7 +51,7 @@ const createOrder = async (userId, items) => {
         throw new Error('failed to create order')
     }
 
-    const updated = updatePayment(orderId, totalCost, item_details)
+    const updated = updatePayment(userId, orderId, totalCost, item_details)
     if (!updated) {
         throw new Error('failed update order')
     }
@@ -93,8 +93,14 @@ const getOrder = async (userId, orderId) => {
     return order
 }
 
+const getOrders = async (userId, role, orderStatus, paymetStatus) => {
+    const orders = await orderRepository.getOrders(userId, role, orderStatus, paymetStatus)
+    return orders
+}
+
 const updatePayment = async (userId, orderId, totalCost, item_details) => {
     const paymentData = await midtransServices.getToken(orderId, totalCost, item_details);
+    
     if (!paymentData) {
         throw new Error('failed create token')
     }
@@ -142,6 +148,7 @@ module.exports = {
     createOrder,
     updatePayment,
     getOrder,
+    getOrders,
     deleteOrder,
     getPaymentToken,
     updateOrder

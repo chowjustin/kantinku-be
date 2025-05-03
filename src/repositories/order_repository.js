@@ -1,4 +1,4 @@
-const db = require('../config/database')
+const db = require('../config/database');
 
 const getOrderByUserId = async (userId) => {
     try {
@@ -78,6 +78,30 @@ const getOrderById = async (userId, orderId) => {
         return result.rows[0];
     } catch (error) {
         throw new Error('order not found')
+    }
+}
+
+const getOrders = async (userId, role, orderStatus, paymentStatus) => {
+    if (role == "tenant") {
+        query = `
+            SELECT * FROM orders
+            WHERE tenant_id = $1 AND order_status = $2 AND payment_status = $3 AND token IS NOT NULL
+            ORDER BY processed_at ASC, created_at ASC
+        `
+    } else {
+        query = `
+            SELECT * FROM orders
+            WHERE user_id = $1 AND order_status = $2 AND payment_status = $3 AND token IS NOT NULL
+            ORDER BY processed_at ASC, created_at ASC
+        `
+    }
+
+    try {
+        const result = await db.query(query, [userId, orderStatus, paymentStatus])
+        return result.rows
+    } catch (error) {
+        console.log(error)
+        throw new Error('orders not found')
     }
 }
 
@@ -163,6 +187,7 @@ module.exports = {
     create,
     updateById,
     getOrderById,
+    getOrders,
     getPaymentData,
     deleteOrder,
     updateOrderItems,
