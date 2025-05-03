@@ -159,6 +159,15 @@ const updateOrderItems = async (orderId, items) => {
     }
 };
 
+const updatePaymentStatus = async (orderId, paymentStatus) => {
+    try {
+        await db.query('UPDATE orders SET payment_status = $1 WHERE id = $2', [paymentStatus, orderId]);
+    } catch (error) {
+        console.error("DB update error:", error);
+        throw error;
+    }
+}
+
 module.exports = {
     create,
     updateById,
@@ -166,5 +175,6 @@ module.exports = {
     getPaymentData,
     deleteOrder,
     updateOrderItems,
-    getOrderByUserId
+    getOrderByUserId,
+    updatePaymentStatus
 }

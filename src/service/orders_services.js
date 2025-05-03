@@ -1,3 +1,4 @@
+const { notification } = require('midtrans-client/lib/snapBi/snapBi')
 const midtrans = require('../config/midtrans')
 const menuRepository = require('../repositories/menu_repository')
 const orderRepository = require('../repositories/order_repository')
@@ -138,11 +139,24 @@ const updateOrder = async (userId, orderId, updates) => {
     return updated;
 }
 
+const setPaymentStatus = async (notificationData) => {
+    orderId = notificationData.order_id;
+
+    if (!orderId) throw new Error('order id is missing');
+
+    const status = notificationData.transaction_status;
+
+    if (!status) throw new Error('transaction status is missing');
+
+    await orderRepository.updatePaymentStatus(orderId, status);
+}
+
 module.exports = {
     createOrder,
     updatePayment,
     getOrder,
     deleteOrder,
     getPaymentToken,
-    updateOrder
+    updateOrder,
+    setPaymentStatus
 }

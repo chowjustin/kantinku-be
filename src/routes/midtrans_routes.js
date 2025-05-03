@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { getToken } = require("../controllers/midtrans_controller");
-const { authenticate, authorize } = require("../middlewares/authentication")
+const { midtransNotification } = require("../controllers/midtrans_controller");
 
-router.post("/token", authenticate, authorize("student"), getToken);
+router.post("/notification", midtransNotification);
 
 module.exports = router; 
