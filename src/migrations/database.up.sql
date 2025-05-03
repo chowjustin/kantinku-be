@@ -10,8 +10,7 @@ DROP TYPE IF EXISTS status_order;
 DROP TYPE IF EXISTS status_payment;
 
 CREATE TYPE status_order AS ENUM ('Menunggu', 'Diproses', 'Ditolak', 'Siap Diambil', 'Selesai');
-CREATE TYPE status_payment AS ENUM ('Unpaid', 'Paid');
-
+CREATE TYPE status_payment AS ENUM ('capture', 'settlement', 'pending', 'deny', 'cancel', 'expire', 'failure', 'refund', 'partial_refund', 'authorize');
 
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
