@@ -20,7 +20,7 @@ const create = async (orders) => {
         const orderRes = await client.query(
             `INSERT INTO orders (user_id, tenant_id)
              VALUES ($1, $2)
-             RETURNING id`,
+             RETURNING *`,
             [userId, tenantId]
         );
         const orderId = orderRes.rows[0].id;
@@ -32,10 +32,17 @@ const create = async (orders) => {
                VALUES ($1, $2, $3)`,
                 [orderId, menu_id, quantity]
             );
+
+            await client.query(
+                `UPDATE menus
+                 SET stok = stok - $1
+                 WHERE id = $2`,
+                [quantity, menu_id]
+            );
         }
 
         await client.query('COMMIT');
-        return orderId;
+        return orderRes.rows[0];
     } catch (err) {
         await client.query('ROLLBACK');
         throw err;
@@ -54,17 +61,13 @@ const updateById = async (userId, orderId, updates) => {
     const query = `
         UPDATE orders 
         SET ${fields} 
-        WHERE id = $${values.length - 1} AND user_id = $${values.length}
-        RETURNING id, tenant_id, order_status, payment_status, token, expires_at;
+        WHERE id = $${values.length - 1} AND tenant_id = $${values.length}
+        RETURNING *;
     `;
 
     try {
         const result = await db.query(query, values);
-
-        if (result.rowCount === 0) {
-            throw new Error('order not found');
-        }
-
+        console.log(fields, values, result.rows[0])
         return result.rows[0];
     } catch (error) {
         throw new Error(error.message);
@@ -86,13 +89,13 @@ const getOrders = async (userId, role, orderStatus, paymentStatus) => {
         query = `
             SELECT * FROM orders
             WHERE tenant_id = $1 AND order_status = $2 AND payment_status = $3 AND token IS NOT NULL
-            ORDER BY processed_at ASC, created_at ASC
+            ORDER BY order_status_updated_at DSC, created_at DSC
         `
     } else {
         query = `
             SELECT * FROM orders
             WHERE user_id = $1 AND order_status = $2 AND payment_status = $3 AND token IS NOT NULL
-            ORDER BY processed_at ASC, created_at ASC
+            ORDER BY payment_status_updated_at DSC, created_at DSC
         `
     }
 
@@ -142,21 +145,36 @@ const getPaymentData = async (userId, orderId) => {
 }
 
 const deleteOrder = async (userId, orderId) => {
+    const client = await db.connect();
+
     try {
-        const result = await db.query(
-            `DELETE FROM orders WHERE id = $1 AND user_id = $2 RETURNING id`,
-            [orderId, userId]
-        )
-    
-        if (result.rowCount == 0) {
-            throw new Error('order not found')
+        await client.query('BEGIN');
+
+        const orderItems = await client.query(
+            `SELECT menu_id, quantity FROM order_item WHERE order_id = $1`,
+            [orderId]
+        );
+
+        for (const { menu_id, quantity } of orderItems.rows) {
+            await client.query(
+                `UPDATE menus SET stok = stok + $1 WHERE id = $2`,
+                [quantity, menu_id]
+            );
         }
-    
-        return result.rows[0]
+        const result = await client.query(
+            `DELETE FROM orders WHERE id = $1 AND user_id = $2 RETURNING *`,
+            [orderId, userId]
+        );
+
+        await client.query('COMMIT');
+        return result.rows[0];
     } catch (error) {
-        throw error
+        await client.query('ROLLBACK');
+        throw error.message;
+    } finally {
+        client.release();
     }
-}
+};
 
 const updateOrderItems = async (orderId, items) => {
     const client = await db.connect();

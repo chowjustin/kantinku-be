@@ -47,17 +47,21 @@ const createOrder = async (userId, items) => {
         items
     }
 
-    const orderId = await orderRepository.create(order)
-    if (!orderId) {
+    const orderRes = await orderRepository.create(order)
+    if (!orderRes) {
         throw new Error('failed to create order')
     }
 
-    const updated = updatePayment(userId, orderId, totalCost, item_details)
-    if (!updated) {
-        throw new Error('failed update order')
+    const paymentData = await midtransServices.getToken(orderRes.id, totalCost, item_details);
+    if (!paymentData) {
+        throw new Error('failed create token')
     }
 
-    return updated
+    return {
+        ...orderRes,
+        token: paymentData.token,
+        redirect_url: midtrans.redirect_url + paymentData.token
+    }
 }
 
 const getPaymentToken = async (userId, orderId) => {
@@ -65,24 +69,24 @@ const getPaymentToken = async (userId, orderId) => {
     if (!order) {
         throw new Error('failed get order')
     }
-    
-    if (order.payment_status == 'Paid') {
-        throw new Error('order status is not unpaid')
+
+    if (['capture', 'settlement', 'authorize'].includes(order.payment_status)) {
+        throw new Error('order status is not allowed to generate token');
     }
 
-    const paymentData = await orderRepository.getPaymentData(userId, orderId)
+    const paymentData = await orderRepository.getPaymentData(order.user_id, order.id)
     if (!paymentData) {
         throw new Error('failed get payment data')
     }
 
-    const updated = await updatePayment(userId, orderId, paymentData.totalCost, paymentData.items)
-    if (!updated) {
-        throw new Error('failed update order')
+    const res = await midtransServices.getToken(order.id, paymentData.totalCost, paymentData.items);
+    if (!res) {
+        throw new Error('failed create token')
     }
-    
+
     return {
-        token: updated.token,
-        redirect_url: midtrans.redirect_url + updated.token,
+        token: res.token,
+        redirect_url: midtrans.redirect_url + res.token
     }
 }
 
@@ -101,13 +105,13 @@ const getOrders = async (userId, role, orderStatus, paymetStatus) => {
 
 const updatePayment = async (userId, orderId, totalCost, item_details) => {
     const paymentData = await midtransServices.getToken(orderId, totalCost, item_details);
-    
+
     if (!paymentData) {
         throw new Error('failed create token')
     }
 
     const updated = await orderRepository.updateById(
-        userId, 
+        userId,
         orderId,
         {
             token: paymentData.token,
@@ -131,7 +135,7 @@ const deleteOrder = async (userId, orderId) => {
 }
 
 const updateOrder = async (userId, orderId, updates) => {
-    const allowedFields = ['payment_status', 'order_status', 'processed_at'];
+    const allowedFields = ['order_status', 'estimasi', 'antrian'];
     const updateKeys = Object.keys(updates);
 
     updateKeys.forEach(key => {
@@ -139,8 +143,7 @@ const updateOrder = async (userId, orderId, updates) => {
     });
 
     const updated = await orderRepository.updateById(userId, orderId, updates)
-
-    if (!updated) throw new Error("Failed to update tenant");
+    if (!updated) throw new Error("Failed to update order");
 
     return updated;
 }

@@ -1,11 +1,20 @@
 const menuRepository = require('../repositories/menu_repository')
-const orderRepository = require('../repositories/order_repository') 
-const orderItemRepository = require('../repositories/order_item_repository') 
+const orderRepository = require('../repositories/order_repository')
+const orderItemRepository = require('../repositories/order_item_repository')
 const midtransServices = require('./midtrans_services')
 
 
-const createOrderItem = async (orderId, orderItemData) => {
+const createOrderItem = async (userId, orderId, orderItemData) => {
     const { menu_id, quantity } = orderItemData;
+
+    const order = await orderRepository.getOrderById(userId, orderId)
+    if (!order) {
+        throw new Error('failed get order')
+    }
+
+    if (['capture', 'settlement', 'authorize'].includes(order.payment_status)) {
+        throw new Error('order status is not allowed to create new order items');
+    }
 
     const menu = await menuRepository.getMenuById(menu_id);
     if (!menu) {
@@ -30,10 +39,19 @@ const createOrderItem = async (orderId, orderItemData) => {
     return result;
 };
 
-const updateQuantity = async (orderId, itemId, quantity) => {
-    const orderItem = await orderItemRepository.getOrderItemByMenuId(orderId, itemId);
+const updateQuantity = async (userId, orderId, menuId, quantity) => {
+    const orderItem = await orderItemRepository.getOrderItemByMenuId(orderId, menuId);
     if (!orderItem) {
         throw new Error(`order item with id not found`);
+    }
+
+    const order = await orderRepository.getOrderById(userId, orderId)
+    if (!order) {
+        throw new Error('failed get order')
+    }
+
+    if (['capture', 'settlement', 'authorize'].includes(order.payment_status)) {
+        throw new Error('order status is not allowed to update order items');
     }
 
     const menu = await menuRepository.getMenuById(orderItem.menu_id);
@@ -45,7 +63,7 @@ const updateQuantity = async (orderId, itemId, quantity) => {
         throw new Error(`insufficient stock`);
     }
 
-    const updatedOrderItem = await orderItemRepository.updateOrderItemQuantity(orderId, itemId, quantity);
+    const updatedOrderItem = await orderItemRepository.updateOrderItemQuantity(orderId, menuId, quantity);
     if (!updatedOrderItem) {
         throw new Error('failed to update order item quantity');
     }
@@ -61,7 +79,16 @@ const getOrderItem = async (orderId) => {
     return orderItems;
 };
 
-const deleteOrderItem = async (orderId, menuId) => {
+const deleteOrderItem = async (userId, orderId, menuId) => {
+    const order = await orderRepository.getOrderById(userId, orderId)
+    if (!order) {
+        throw new Error('failed get order')
+    }
+
+    if (['capture', 'settlement', 'authorize'].includes(order.payment_status)) {
+        throw new Error('order status is not allowed to delete order items');
+    }
+
     const result = await orderItemRepository.deleteOrderItem(orderId, menuId);
     if (!result) {
         throw new Error(`failed to delete menu in order`);
@@ -73,6 +100,15 @@ const updateOrderItems = async (userId, orderId, items) => {
     let tenantId = ''
     let totalCost = 0;
     let item_details = [];
+
+    const order = await orderRepository.getOrderById(userId, orderId)
+    if (!order) {
+        throw new Error('failed get order')
+    }
+
+    if (['capture', 'settlement', 'authorize'].includes(order.payment_status)) {
+        throw new Error('order status is not allowed to update order items');
+    }
 
     const menuIds = items.map(item => item.menu_id);
     const menus = await menuRepository.getMenuByIds(menuIds);
@@ -106,16 +142,11 @@ const updateOrderItems = async (userId, orderId, items) => {
         totalCost += menu.harga * quantity;
     }
 
-    await orderItemRepository.updateOrderItems(orderId, items).catch(() => {
+    const countUpdated = await orderItemRepository.updateOrderItems(orderId, items).catch(() => {
         throw new Error('failed to update order items');
-    }); 
+    });
 
-    const updatedPayment = await updatePayment(userId, orderId, totalCost, item_details);
-    if (!updatedPayment) {
-        throw new Error('failed to update payment');
-    }
-
-    return updatedPayment;
+    return countUpdated;
 }
 
 const updatePayment = async (userId, orderId, totalCost, item_details) => {
