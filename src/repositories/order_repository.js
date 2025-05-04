@@ -88,14 +88,14 @@ const getOrders = async (userId, role, orderStatus, paymentStatus) => {
     if (role == "tenant") {
         query = `
             SELECT * FROM orders
-            WHERE tenant_id = $1 AND order_status = $2 AND payment_status = $3 AND token IS NOT NULL
-            ORDER BY order_status_updated_at DSC, created_at DSC
+            WHERE tenant_id = $1 AND order_status = $2 AND payment_status = $3
+            ORDER BY order_status_updated_at DESC, created_at DESC
         `
     } else {
         query = `
             SELECT * FROM orders
-            WHERE user_id = $1 AND order_status = $2 AND payment_status = $3 AND token IS NOT NULL
-            ORDER BY payment_status_updated_at DSC, created_at DSC
+            WHERE user_id = $1 AND order_status = $2 AND payment_status = $3
+            ORDER BY payment_status_updated_at DESC, created_at DESC
         `
     }
 
