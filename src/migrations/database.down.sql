@@ -1,3 +1,5 @@
+DROP TRIGGER trg_order_update_status ON orders;
+DROP FUNCTION order_update_status();
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS canteen CASCADE;
 DROP TABLE IF EXISTS tenant CASCADE;

@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS order_item;
 DROP TYPE IF EXISTS status_order;
 DROP TYPE IF EXISTS status_payment;
 
-CREATE TYPE status_order AS ENUM ('Menunggu', 'Diproses', 'Ditolak', 'Siap Diambil', 'Selesai');
+CREATE TYPE status_order AS ENUM ('pending', 'processing', 'rejected', 'ready', 'completed');
 CREATE TYPE status_payment AS ENUM ('capture', 'settlement', 'pending', 'deny', 'cancel', 'expire', 'failure', 'refund', 'partial_refund', 'authorize');
 
 CREATE TABLE users (
@@ -63,11 +63,15 @@ CREATE TABLE orders (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id UUID NOT NULL,
     tenant_id UUID NOT NULL,
-    order_status status_order NOT NULL DEFAULT 'Menunggu',
-    payment_status status_payment NOT NULL DEFAULT 'Unpaid',
-    token VARCHAR(255),
-    expires_at TIMESTAMP,
-    processed_at TIMESTAMP,
+    order_status status_order NOT NULL DEFAULT 'pending',
+    
+    payment_status status_payment NOT NULL DEFAULT 'pending',
+    estimasi INTEGER,
+    antrian INTEGER, 
+
+    payment_status_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, 
+    order_status_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -80,3 +84,23 @@ CREATE TABLE order_item (
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (menu_id) REFERENCES menus(id)
 );
+
+CREATE OR REPLACE FUNCTION order_update_status()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.payment_status IS DISTINCT FROM OLD.payment_status THEN
+      NEW.payment_status_updated_at := NOW();
+    END IF;
+
+    IF NEW.order_status IS DISTINCT FROM OLD.order_status THEN
+      NEW.order_status_updated_at := NOW();
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_order_update_status
+BEFORE UPDATE ON orders
+FOR EACH ROW
+EXECUTE FUNCTION order_update_status();
