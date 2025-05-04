@@ -1,4 +1,5 @@
 const tenantServices = require('../service/tenant_services');
+const menuServices = require('../service/menu_services')
 const { buildResponseFailed, buildResponseSuccess } = require('../utils/response');
 
 const registerTenant = async (req, res) => {
@@ -9,7 +10,10 @@ const registerTenant = async (req, res) => {
             return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
         }
 
-        const newTenant = await tenantServices.register({ canteen_id, nama, nama_tenant, nomor_telepon, email, password });
+
+        const image_url = req.file?.path;
+
+        const newTenant = await tenantServices.register({ canteen_id, nama, nama_tenant, nomor_telepon, email, password, image_url });
 
         res.status(201).json(buildResponseSuccess("tenant created successfully", newTenant));
     } catch (error) {
@@ -33,13 +37,27 @@ const loginTenant = async (req, res) => {
     }
 };
 
+const getAllTenant = async (req, res) => {
+    try {
+        const tenants = await tenantServices.getAllTenant()
+        res.status(200).json(buildResponseSuccess("successfully get all tenant", tenants));
+    } catch (error) {
+        res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+}
+
 const getCurrentTenant = async (req, res) => {
     try {
         const tenantId = req.userId;
         const tenant = await tenantServices.getCurrentTenant(tenantId);
         tenant.role = req.userRole;
-
-        return res.status(200).json(buildResponseSuccess("success get tenant", tenant));
+        const menus = await menuServices.getMenu(tenantId)
+        
+        const result = {
+            ...tenant,
+            menus
+        }
+        return res.status(200).json(buildResponseSuccess("success get tenant", result));
     } catch (error) {
         return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
     }
@@ -54,7 +72,14 @@ const getTenant = async (req, res) => {
             return res.status(404).json(buildResponseFailed("tenant not found", "failed get menu", null));
         }
 
-        return res.status(200).json(buildResponseSuccess("success get tenant", tenant));
+        const menus = await menuServices.getMenu(tenantId)
+
+        const result = {
+            ...tenant,
+            menus
+        }
+
+        return res.status(200).json(buildResponseSuccess("success get tenant", result));
     } catch (error) {
         return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
     }
@@ -109,6 +134,7 @@ module.exports = {
     registerTenant,
     loginTenant,
     getCurrentTenant,
+    getAllTenant,
     getTenant,
     updateTenant,
     deleteTenant,

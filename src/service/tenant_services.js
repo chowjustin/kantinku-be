@@ -6,7 +6,7 @@ const {generateToken} = require('./jwt_services')
 require('dotenv').config()
 
 const register = async (tenantData) => {
-    const { canteen_id, nama, nama_tenant, nomor_telepon, email, password } = tenantData;
+    const { canteen_id, nama, nama_tenant, nomor_telepon, email, password, image_url } = tenantData;
 
     const existingTenant = await tenantRepository.getTenantByEmail(email);
     if (existingTenant) {
@@ -21,7 +21,8 @@ const register = async (tenantData) => {
         nama_tenant,
         password: hashedPassword,
         nomor_telepon,
-        email
+        email, 
+        image_url
     });
 
     return newTenant;
@@ -108,10 +109,16 @@ const selectCanteen = async (tenantId, canteenId) => {
     return updatedTenant;
 };
 
+const getAllTenant = async () => {
+    const tenants = await tenantRepository.getAllTenant();
+    return tenants
+}
+
 module.exports = {
     register,
     login,
     getCurrentTenant,
+    getAllTenant,
     getTenantById,
     updateTenant,
     deleteTenant,

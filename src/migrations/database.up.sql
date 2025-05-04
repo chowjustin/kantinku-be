@@ -41,6 +41,7 @@ CREATE TABLE tenant (
     password CHAR(60) NOT NULL,
     email VARCHAR(254) NOT NULL UNIQUE,
     nomor_telepon VARCHAR(20) NOT NULL,
+    image_url TEXT,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 

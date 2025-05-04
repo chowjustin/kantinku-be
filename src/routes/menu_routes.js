@@ -4,7 +4,7 @@ const { authenticate, authorize } = require("../middlewares/authentication");
 const upload = require("../middlewares/upload_image");
 const router = express.Router();
 
-router.get('', authenticate, authorize("tenant"), menuController.getAllMenu);
+// router.get('', authenticate, authorize("tenant"), menuController.getAllMenu);
 router.post('', authenticate, authorize("tenant"), upload.single('image'), menuController.createMenu);
 // router.post('', authenticate, authorize("tenant"), menuController.createMenu);
 router.get('/:id', menuController.getMenuById);

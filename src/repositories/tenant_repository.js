@@ -1,19 +1,28 @@
 const db = require('../config/database'); 
 
 const create = async (tenantData) => {
-    const { canteen_id, nama, nama_tenant, nomor_telepon, email, password } = tenantData;
+    const { canteen_id, nama, nama_tenant, nomor_telepon, email, password, image_url } = tenantData;
 
     const query = `
-            INSERT INTO tenant (canteen_id, nama, nama_tenant, nomor_telepon, email, password)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING id, canteen_id, nama, nama_tenant, nomor_telepon, email;
+            INSERT INTO tenant (canteen_id, nama, nama_tenant, nomor_telepon, email, password, image_url)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING id, canteen_id, nama, nama_tenant, nomor_telepon, email, image_url;
         `;
 
-    const values = [canteen_id, nama, nama_tenant, nomor_telepon, email, password];
+    const values = [canteen_id, nama, nama_tenant, nomor_telepon, email, password, image_url];
 
     try {
         const result = await db.query(query, values);
         return result.rows[0];
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+const getAllTenant = async () => {
+    try {
+        const result = await db.query(`SELECT * FROM tenant`);
+        return result.rows;
     } catch (error) {
         throw new Error(error.message);
     }
@@ -32,7 +41,7 @@ const getTenantByEmail = async (email) => {
 }
 
 const findTenantById = async (tenantId) => {
-    const result = await db.query('SELECT id, canteen_id, nama, nama_tenant, email, nomor_telepon, created_at FROM tenant WHERE id = $1', [tenantId]);
+    const result = await db.query('SELECT id, canteen_id, nama, nama_tenant, email, nomor_telepon, image_url, created_at FROM tenant WHERE id = $1', [tenantId]);
     return result.rows[0];
 };
 
@@ -64,6 +73,7 @@ const selectCanteenById = async (tenantId, canteenId) => {
 module.exports = {
     create,
     getTenantByEmail,
+    getAllTenant,
     findTenantById,
     updateTenantById,
     deleteTenantById,
