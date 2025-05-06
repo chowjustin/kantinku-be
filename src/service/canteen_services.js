@@ -19,6 +19,15 @@ const createCanteen = async (canteenData) => {
     return newCanteen
 };
 
+const getCanteenById = async (canteenId) => {
+    const canteen = await canteenRepository.getCanteenById(canteenId)
+    if (!canteen) {
+        throw new Error('No canteen found')
+    }
+
+    return canteen
+}
+
 const getAllCanteens = async () => {
     const canteens = await canteenRepository.getAllCanteens();
 
@@ -29,5 +38,6 @@ const getAllCanteens = async () => {
 
 module.exports = {
     createCanteen,
-    getAllCanteens
+    getAllCanteens,
+    getCanteenById
 }

@@ -1,5 +1,6 @@
 const tenantServices = require('../service/tenant_services');
 const menuServices = require('../service/menu_services')
+const canteenServices = require('../service/canteen_services')
 const { buildResponseFailed, buildResponseSuccess } = require('../utils/response');
 
 const registerTenant = async (req, res) => {
@@ -71,11 +72,21 @@ const getTenant = async (req, res) => {
         if (!tenant) {
             return res.status(404).json(buildResponseFailed("tenant not found", "failed get menu", null));
         }
+        
+        const canteen = await canteenServices.getCanteenById(tenant.canteen_id)
+
+        if (!canteen) {
+            return res.status(404).json(buildResponseFailed("canteen not found", "failed get canteen", null));
+        }
 
         const menus = await menuServices.getMenu(tenantId)
 
         const result = {
             ...tenant,
+            nama_canteen: canteen.nama,
+            departement: canteen.departement,
+            latitude: canteen.latitude,
+            longitude: canteen.longitude,
             menus
         }
 
