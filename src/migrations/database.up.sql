@@ -67,6 +67,7 @@ CREATE TABLE orders (
     order_status status_order NOT NULL DEFAULT 'pending',
     
     payment_status status_payment NOT NULL DEFAULT 'pending',
+    notes TEXT,
     estimasi INTEGER,
     antrian INTEGER, 
 
