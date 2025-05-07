@@ -160,6 +160,10 @@ const setPaymentStatus = async (notificationData) => {
     await orderRepository.updatePaymentStatus(orderId, status);
 }
 
+const orderDone = async (orderId) => {
+    await orderRepository.markOrderAsDone(orderId);
+};
+
 module.exports = {
     createOrder,
     updatePayment,
@@ -168,5 +172,6 @@ module.exports = {
     deleteOrder,
     getPaymentToken,
     updateOrder,
-    setPaymentStatus
+    setPaymentStatus,
+    orderDone
 }

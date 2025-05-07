@@ -210,6 +210,39 @@ const updatePaymentStatus = async (orderId, paymentStatus) => {
     }
 }
 
+const getQueueAttr = async (tenantId) => {
+    try {
+        const query = `
+        SELECT 
+            o.id AS order_id,
+            o.notes,
+            o.created_at,
+            u.nama AS user_name,
+            oi.quantity,
+            m.nama AS menu_name
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        JOIN order_item oi ON o.id = oi.order_id
+        JOIN menus m ON oi.menu_id = m.id
+        WHERE o.tenant_id = $1 AND o.order_status = 'pending'
+        ORDER BY o.created_at ASC
+        `;
+
+        const result = await db.query(query, [tenantId]);
+        return result.rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const markOrderAsDone = async (orderId) => {
+    try {
+        await db.query(`UPDATE orders SET order_status = 'ready' WHERE id = $1`, [orderId])
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     create,
     updateById,
@@ -219,5 +252,7 @@ module.exports = {
     deleteOrder,
     updateOrderItems,
     getOrderByUserId,
-    updatePaymentStatus
+    updatePaymentStatus,
+    getQueueAttr,
+    markOrderAsDone
 }

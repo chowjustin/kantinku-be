@@ -96,6 +96,19 @@ const updateOrder = async (req, res) => {
     }
 };
 
+const orderDone = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        if (!orderId) return res.status(400).json(buildResponseFailed("missing order ID", "invalid request", null));
+
+        await orderServices.orderDone(orderId);
+
+        res.status(200).json({ message: "Order marked as done." });
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
+}
+
 module.exports = {
     createOrderAndCheckout,
     checkout,
@@ -103,4 +116,5 @@ module.exports = {
     getOrders,
     deleteOrder,
     updateOrder,
+    orderDone
 }

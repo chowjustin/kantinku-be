@@ -139,6 +139,20 @@ const selectCanteen = async (req, res) => {
     } catch (error) {
         return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
     }
+};
+
+const getQueue = async (req, res) => {
+    try {
+        const tenantId = req.params.id;
+
+        if (!tenantId) return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
+
+        const queue = await tenantServices.getQueue(tenantId);
+
+        return res.status(200).json(buildResponseSuccess("success get queue", queue))
+    } catch (error) {
+        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+    }
 }
 
 module.exports = {
@@ -150,4 +164,5 @@ module.exports = {
     updateTenant,
     deleteTenant,
     selectCanteen,
+    getQueue
 };

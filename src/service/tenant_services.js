@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt');
 const tenantRepository = require('../repositories/tenant_repository');
 const menuRepository = require('../repositories/menu_repository');
+const { getQueueAttr } = require('../repositories/order_repository');
+const { getUsernamesByIds } = require('../repositories/user_repository');
 const {generateToken} = require('./jwt_services')
 
 require('dotenv').config()
@@ -114,6 +116,45 @@ const getAllTenant = async () => {
     return tenants
 }
 
+const getQueue = async (tenantId) => {
+    const flatRows = await getQueueAttr(tenantId);
+    if (flatRows.length === 0) return [];
+
+    const orderMap = new Map();
+
+    for (const row of flatRows) {
+        const {
+            order_id,
+            notes,
+            created_at,
+            user_name,
+            menu_name,
+            quantity
+        } = row;
+
+        if (!orderMap.has(order_id)) {
+            orderMap.set(order_id, {
+                orderId: order_id,
+                notes,
+                createdAt: created_at,
+                pemesan: user_name,
+                pesanan: []
+            });
+        }
+
+        orderMap.get(order_id).pesanan.push({
+            menu: menu_name,
+            quantity
+        });
+    }
+
+    const result = Array.from(orderMap.values());
+
+    // result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+    return result;
+};
+
 module.exports = {
     register,
     login,
@@ -122,5 +163,6 @@ module.exports = {
     getTenantById,
     updateTenant,
     deleteTenant,
-    selectCanteen
+    selectCanteen,
+    getQueue
 };
