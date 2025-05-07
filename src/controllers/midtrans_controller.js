@@ -9,7 +9,7 @@ const midtransNotification = async (req, res) => {
         return res.status(200).json(buildResponseSuccess("Payment notification received", null));
     } catch (err) {
         console.error("Webhook error:", err);
-        return res.status(500).json(buildResponseFailed("interal server error", err.message, null));
+        return res.status(500).json(buildResponseFailed("internal server error", err.message, null));
     }
   };
 
