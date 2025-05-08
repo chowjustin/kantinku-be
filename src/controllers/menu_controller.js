@@ -30,16 +30,23 @@ const updateMenu = async (req, res) => {
     try {
         const tenantId = req.userId;
         const menuId = req.params.id;
-        const { nama, deskripsi, harga, stok } = req.body;
 
-        if (!menuId || !nama || !deskripsi || !harga || !stok) {
-            return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
+        if (!menuId) {
+            return res.status(400).json(buildResponseFailed("missing menu ID", "invalid request params", null));
         }
 
         const image_url = req.file?.path;
+        const rawUpdates = { nama: req.body.nama, deskripsi: req.body.deskripsi, harga: req.body.harga, stok: req.body.stok, image_url };
+        const updates = Object.fromEntries(
+            Object.entries(rawUpdates).filter(([_, value]) => value !== undefined)
+        );
 
-        const updatedMenu = await menuServices.updateMenu(tenantId, menuId, { nama, deskripsi, harga, stok, image_url });
-        // const updatedMenu = await menuServices.updateMenu(tenantId, menuId, { nama, deskripsi, harga, stok });
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json(buildResponseFailed("no fields to update", "invalid request body", null));
+        }
+
+        const updatedMenu = await menuServices.updateMenu(tenantId, menuId, updates);
+
         if (!updatedMenu) {
             return res.status(404).json(buildResponseFailed("menu not found", "failed update menu", null));
         }
