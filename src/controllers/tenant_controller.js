@@ -101,7 +101,7 @@ const updateTenant = async (req, res) => {
         const tenantId = req.userId;
         const { nama, nama_tenant, nomor_telepon, email, password } = req.body;
 
-        if (!nama || !nama_tenant || !nomor_telepon || !email || !password) {
+        if (!nama && !nama_tenant && !nomor_telepon && !email && !password) {
             return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
         }
 
