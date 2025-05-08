@@ -150,8 +150,6 @@ const getQueue = async (tenantId) => {
 
     const result = Array.from(orderMap.values());
 
-    // result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-
     return result;
 };
 
