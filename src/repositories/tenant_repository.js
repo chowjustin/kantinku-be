@@ -22,11 +22,11 @@ const create = async (tenantData) => {
 const getAllTenant = async () => {
     try {
         const result = await db.query(`
-            SELECT t.*, c.latitude, c.longitude
+            SELECT t.*, c.latitude, c.longitude, c.departement
             FROM tenant t
             LEFT JOIN canteen c ON t.canteen_id = c.id
         `);
-        
+
         return result.rows;
     } catch (error) {
         throw new Error(error.message);
