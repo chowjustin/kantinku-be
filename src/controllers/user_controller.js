@@ -50,7 +50,7 @@ const updateUser = async (req, res) => {
         const userId = req.userId;
         const { nama, nomor_telepon, email, password } = req.body;
 
-        if (!nama || !nomor_telepon || !email || !password) {
+        if (!nama && !nomor_telepon && !email && !password) {
             return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
         }
 
