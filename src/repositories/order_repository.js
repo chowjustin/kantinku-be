@@ -12,16 +12,16 @@ const getOrderByUserId = async (userId) => {
 
 const create = async (orders) => {
     const client = await db.connect()
-    const { userId, tenantId, items } = orders
+    const { userId, tenantId, items, notes } = orders
 
     try {
         await client.query('BEGIN')
 
         const orderRes = await client.query(
-            `INSERT INTO orders (user_id, tenant_id)
-             VALUES ($1, $2)
+            `INSERT INTO orders (user_id, tenant_id, notes)
+             VALUES ($1, $2, $3)
              RETURNING *`,
-            [userId, tenantId]
+            [userId, tenantId, notes || null]
         );
         const orderId = orderRes.rows[0].id;
 

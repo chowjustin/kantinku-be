@@ -34,9 +34,10 @@ const getOrders = async (req, res) => {
 const createOrderAndCheckout = async (req, res) => {
     try {
         const userId = req.userId
-        const items = req.body
+        const items = req.body.items
+        const notes = req.body.notes
         
-        const order = await orderServices.createOrder(userId, items)
+        const order = await orderServices.createOrder(userId, items, notes)
         if (!order) {
             return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
         }

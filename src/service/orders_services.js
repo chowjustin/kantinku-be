@@ -4,7 +4,7 @@ const menuRepository = require('../repositories/menu_repository')
 const orderRepository = require('../repositories/order_repository')
 const midtransServices = require('./midtrans_services')
 
-const createOrder = async (userId, items) => {
+const createOrder = async (userId, items, notes) => {
     let tenantId = ''
     let totalCost = 0
     let item_details = []
@@ -44,7 +44,8 @@ const createOrder = async (userId, items) => {
     const order = {
         userId,
         tenantId,
-        items
+        items,
+        notes
     }
 
     const orderRes = await orderRepository.create(order)
