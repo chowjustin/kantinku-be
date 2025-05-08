@@ -84,9 +84,18 @@ const updateOrder = async (req, res) => {
     try {
         const userId = req.userId;
         const orderId = req.params.id;
-        const updatedData = req.body;
+        const rawUpdates = req.body;
 
-        const updatedOrder = await orderServices.updateOrder(userId, orderId, updatedData);
+        const updates = Object.fromEntries(
+            Object.entries(rawUpdates).filter(([_, value]) => value !== undefined)
+        );
+
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json(buildResponseFailed("no fields to update", "invalid request body", null));
+        }
+
+        const updatedOrder = await orderServices.updateOrder(userId, orderId, updates);
+
         if (!updatedOrder) {
             return res.status(404).json(buildResponseFailed("order not found", null, null));
         }
@@ -96,6 +105,7 @@ const updateOrder = async (req, res) => {
         return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
     }
 };
+
 
 const orderDone = async (req, res) => {
     try {
