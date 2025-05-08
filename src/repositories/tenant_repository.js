@@ -22,7 +22,7 @@ const create = async (tenantData) => {
 const getAllTenant = async () => {
     try {
         const result = await db.query(`
-            SELECT t.*, c.latitude, c.longitude, c.departement
+            SELECT t.*, c.nama AS nama_kantin, c.departement, c.latitude, c.longitude
             FROM tenant t
             LEFT JOIN canteen c ON t.canteen_id = c.id
         `);
