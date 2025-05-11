@@ -16,13 +16,10 @@ const createMenu = async (req, res) => {
 
         const newMenu = await menuServices.createMenu(tenantId, { nama, deskripsi, harga, stok, image_url });
         // const newMenu = await menuServices.createMenu(tenantId, { nama, deskripsi, harga, stok });
-        if (!newMenu) {
-            return res.status(404).json(buildResponseFailed("menu not found", "failed create menu", null));
-        }
 
         res.status(201).json(buildResponseSuccess("menu created successfully", newMenu));
     } catch (error) {
-        res.status(500).json(buildResponseFailed(error.message, "failed create menu", null));
+        res.status(500).json(buildResponseFailed("failed create menu", error.message, null));
     }
 }
 
@@ -30,15 +27,16 @@ const updateMenu = async (req, res) => {
     try {
         const tenantId = req.userId;
         const menuId = req.params.id;
+        const body = req.body;
 
         if (!menuId) {
             return res.status(400).json(buildResponseFailed("missing menu ID", "invalid request params", null));
         }
 
         const image_url = req.file?.path;
-        const rawUpdates = { nama: req.body.nama, deskripsi: req.body.deskripsi, harga: req.body.harga, stok: req.body.stok, image_url };
+        body.image_url = image_url
         const updates = Object.fromEntries(
-            Object.entries(rawUpdates).filter(([_, value]) => value !== undefined)
+            Object.entries(body).filter(([_, value]) => value !== undefined)
         );
 
         if (Object.keys(updates).length === 0) {
@@ -53,7 +51,7 @@ const updateMenu = async (req, res) => {
 
         res.status(200).json(buildResponseSuccess("menu updated successfully", updatedMenu));
     } catch (error) {
-        res.status(500).json(buildResponseFailed(error.message, "failed update menu", null));
+        res.status(500).json(buildResponseFailed( "failed update menu", error.message, null));
     }
 }
 

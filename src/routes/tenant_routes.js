@@ -7,7 +7,7 @@ const upload = require("../middlewares/upload_image");
 router.post("/register", upload.single('image'), registerTenant)
 router.post("/login", loginTenant)
 router.get('/me', authenticate, getCurrentTenant);
-router.patch('/me', authenticate, updateTenant);
+router.patch('/me', authenticate, upload.single('image'), updateTenant);
 router.delete('/me', authenticate, deleteTenant);
 router.patch('/select-canteen', authenticate, selectCanteen);
 

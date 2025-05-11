@@ -56,6 +56,10 @@ const createOrderItem = async (req, res) => {
         const orderId = req.params.id
         const orderItemData = req.body
 
+        if (!orderItemData) {
+            return res.status(400).json(buildResponseFailed("bad request", "no items in body", null));
+        }
+
         const createdOrderItem = await orderItemServices.createOrderItem(userId, orderId, orderItemData)
         if (!createdOrderItem) {
             return res.status(400).json(buildResponseFailed("failed to create order item", null, null))
@@ -74,6 +78,10 @@ const updateQuantity = async (req, res) => {
         const menuId = req.params.id
         const { quantity } = req.body
 
+        if (!quantity) {
+            return res.status(400).json(buildResponseFailed("bad request", "body does not have quantity field", null))
+        }
+        
         const updatedOrderItem = await orderItemServices.updateQuantity(userId, orderId, menuId, quantity)
         if (!updatedOrderItem) {
             return res.status(404).json(buildResponseFailed("order item not found", null, null))

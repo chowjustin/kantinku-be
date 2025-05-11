@@ -106,6 +106,8 @@ const updateTenant = async (req, res) => {
         }
 
         const updates = req.body;
+        
+        updates.image_url = req.file?.path;
 
         const updatedTenant = await tenantServices.updateTenant(tenantId, updates);
 

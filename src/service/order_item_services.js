@@ -18,7 +18,11 @@ const createOrderItem = async (userId, orderId, orderItemData) => {
 
     const menu = await menuRepository.getMenuById(menu_id);
     if (!menu) {
-        throw new Error(`menu id not found`);
+        throw new Error(`menu id ${menu_id} not found`);
+    }
+    
+    if (order.tenat_id != menu.tenant_id) {
+        throw new Error('menu tenant_id does not match to tenant_id in order');
     }
 
     if (quantity > menu.stok) {

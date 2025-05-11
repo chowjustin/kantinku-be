@@ -75,7 +75,7 @@ const getTenantById = async (tenantId) => {
 };
 
 const updateTenant = async (tenantId, updates) => {
-    const allowedFields = ['nama', 'nama_tenant', 'email', 'nomor_telepon', 'password'];
+    const allowedFields = ['nama', 'nama_tenant', 'email', 'nomor_telepon', 'password', 'image_url'];
     const updateKeys = Object.keys(updates);
 
     updateKeys.forEach(key => {

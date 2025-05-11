@@ -70,7 +70,7 @@ const updateById = async (userId, orderId, updates) => {
         console.log(fields, values, result.rows[0])
         return result.rows[0];
     } catch (error) {
-        throw new Error(error.message);
+        throw new Error("failed update order");
     }
 
 }

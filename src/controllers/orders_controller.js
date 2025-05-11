@@ -37,6 +37,10 @@ const createOrderAndCheckout = async (req, res) => {
         const items = req.body.items
         const notes = req.body.notes
         
+        if (!items) {
+            return res.status(400).json(buildResponseFailed("bad request", "no items in cart", null));
+        }
+
         const order = await orderServices.createOrder(userId, items, notes)
         if (!order) {
             return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
@@ -91,7 +95,7 @@ const updateOrder = async (req, res) => {
         );
 
         if (Object.keys(updates).length === 0) {
-            return res.status(400).json(buildResponseFailed("no fields to update", "invalid request body", null));
+            return res.status(400).json(buildResponseFailed("invalid request body", "no fields to update", null));
         }
 
         const updatedOrder = await orderServices.updateOrder(userId, orderId, updates);

@@ -2,13 +2,12 @@ const menuRepository = require('../repositories/menu_repository')
 
 const createMenu = async (tenantId, menuData) => {
     const {nama, deskripsi, harga, stok, image_url} = menuData;
-    // const {nama, deskripsi, harga, stok} = menuData;
 
     const tenantMenu = await menuRepository.checkTenantMenu(tenantId, nama)
     if (tenantMenu) {
-        throw new Error('Same menu name already exist in you menu')
+        throw new Error('menu name already exist')
     }
-
+    
     const newMenu = await menuRepository.create({
         tenantId, 
         nama,
@@ -17,6 +16,10 @@ const createMenu = async (tenantId, menuData) => {
         stok,
         image_url
     })
+    
+    if (!newMenu) {
+        throw new Error('failed to create menu')
+    }
 
     return newMenu
 }
@@ -37,11 +40,18 @@ const updateMenu = async (tenantId, menuId, updates) => {
 
     const updatedMenu = await menuRepository.updateMenuByTenantId(tenantId, menuId, updates)
     
+    if (!updateMenu) {
+        throw new Error('failed update menu')
+    }
+
     return updatedMenu
 }
 
 const deleteMenu = async(tenantId, menuId) => {
     const deletedMenu = await menuRepository.deleteMenuByTenantId(tenantId, menuId)
+    if (!deleteMenu) {
+        throw new Error('failed delete menu')
+    }
     return deletedMenu
 }
 
