@@ -101,13 +101,14 @@ const updateTenant = async (req, res) => {
         const tenantId = req.userId;
         const { nama, nama_tenant, nomor_telepon, email, password } = req.body;
 
-        if (!nama && !nama_tenant && !nomor_telepon && !email && !password) {
-            return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
-        }
-
         const updates = req.body;
         
         updates.image_url = req.file?.path;
+        
+        console.log(updates)
+        if (!nama && !nama_tenant && !nomor_telepon && !email && !password && !updates.image_url) {
+            return res.status(400).json(buildResponseFailed("missing required fields", "invalid request body", null));
+        }
 
         const updatedTenant = await tenantServices.updateTenant(tenantId, updates);
 
