@@ -224,7 +224,7 @@ const getQueueAttr = async (tenantId) => {
         JOIN users u ON o.user_id = u.id
         JOIN order_item oi ON o.id = oi.order_id
         JOIN menus m ON oi.menu_id = m.id
-        WHERE o.tenant_id = $1 AND o.order_status = 'pending'
+        WHERE o.tenant_id = $1 AND o.order_status NOT IN ('completed', 'rejected')
         ORDER BY o.created_at ASC
         `;
 
