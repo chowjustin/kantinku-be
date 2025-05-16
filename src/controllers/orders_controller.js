@@ -1,21 +1,21 @@
 const { buildResponseFailed, buildResponseSuccess } = require('../utils/response');
 const orderServices = require('../service/orders_services');
 
-const checkout = async (req, res) =>  {    
-    try {
-        const userId = req.userId
-        const orderId = req.params.id
+// const checkout = async (req, res) =>  {    
+//     try {
+//         const userId = req.userId
+//         const orderId = req.params.id
 
-        const token = await orderServices.getPaymentToken(userId, orderId)
-        if (!token) {
-            return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
-        }
+//         const token = await orderServices.getPaymentToken(userId, orderId)
+//         if (!token) {
+//             return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+//         }
 
-        return res.status(200).json(buildResponseSuccess("successfully get payment token", token));
-    } catch (error) {
-        return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
-    }
-}
+//         return res.status(200).json(buildResponseSuccess("successfully get payment token", token));
+//     } catch (error) {
+//         return res.status(500).json(buildResponseFailed("internal server error", error.message, null));
+//     }
+// }
 
 const getOrders = async (req, res) => {
     try {
@@ -126,7 +126,7 @@ const orderDone = async (req, res) => {
 
 module.exports = {
     createOrderAndCheckout,
-    checkout,
+    // checkout,
     getOrder,
     getOrders,
     deleteOrder,

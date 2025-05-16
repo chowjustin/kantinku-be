@@ -53,51 +53,32 @@ const createOrder = async (userId, items, notes) => {
         throw new Error('failed to create order')
     }
 
-    const paymentData = await midtransServices.getToken(orderRes.id, totalCost, item_details);
+    const paymentData = await midtransServices.getToken(orderRes.id, totalCost, item_details)
     if (!paymentData) {
         throw new Error('failed create token')
     }
 
+    await orderRepository.updatePaymentToken(orderRes.id, paymentData.token, midtrans.redirect_url + paymentData.token)
+
     return {
         ...orderRes,
-        token: paymentData.token,
+        payment_token: paymentData.token,
         redirect_url: midtrans.redirect_url + paymentData.token
     }
 }
 
-const getPaymentToken = async (userId, orderId) => {
-    const order = await orderRepository.getOrderById(userId, orderId)
+const getOrder = async (userId, orderId) => {
+    const order = await orderRepository.getOrderById(userId, orderId);
     if (!order) {
-        throw new Error('failed get order')
-    }
-
-    if (['capture', 'settlement', 'authorize'].includes(order.payment_status)) {
-        throw new Error('order status is not allowed to generate token');
-    }
-
-    const paymentData = await orderRepository.getPaymentData(order.user_id, order.id)
-    if (!paymentData) {
-        throw new Error('failed get payment data')
-    }
-
-    const res = await midtransServices.getToken(order.id, paymentData.totalCost, paymentData.items);
-    if (!res) {
-        throw new Error('failed create token')
+        throw new Error('failed get order');
     }
 
     return {
-        token: res.token,
-        redirect_url: midtrans.redirect_url + res.token
-    }
-}
+        order
+    };
+};
 
-const getOrder = async (userId, orderId) => {
-    const order = await orderRepository.getOrderById(userId, orderId)
-    if (!order) {
-        throw new Error('failed get order')
-    }
-    return order
-}
+
 
 const getOrders = async (userId, role, orderStatus, paymetStatus) => {
     const orders = await orderRepository.getOrders(userId, role, orderStatus, paymetStatus)
@@ -171,7 +152,7 @@ module.exports = {
     getOrder,
     getOrders,
     deleteOrder,
-    getPaymentToken,
+    // getPaymentToken,
     updateOrder,
     setPaymentStatus,
     orderDone

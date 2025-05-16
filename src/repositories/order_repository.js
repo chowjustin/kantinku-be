@@ -243,6 +243,17 @@ const markOrderAsDone = async (orderId) => {
     }
 }
 
+const updatePaymentToken = async (orderId, token, redirectUrl) => {
+    const res = await db.query(
+        `UPDATE orders 
+         SET payment_token = $1, redirect_url = $2 
+         WHERE id = $3
+         RETURNING *`,
+        [token, redirectUrl, orderId]
+    )
+    return res.rows[0]
+}
+
 module.exports = {
     create,
     updateById,
@@ -254,5 +265,6 @@ module.exports = {
     getOrderByUserId,
     updatePaymentStatus,
     getQueueAttr,
-    markOrderAsDone
+    markOrderAsDone,
+    updatePaymentToken
 }
