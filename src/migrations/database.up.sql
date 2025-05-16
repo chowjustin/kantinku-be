@@ -75,7 +75,7 @@ CREATE TABLE orders (
     order_status_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
     payment_token TEXT,
-    redirect_url TEXT;
+    redirect_url TEXT,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
