@@ -83,30 +83,35 @@ const getOrderById = async (userId, orderId) => {
         throw new Error('order not found')
     }
 }
+const getOrders = async (userId, role, orderStatusList, paymentStatusList) => {
+    const userColumn = role === 'tenant' ? 'tenant_id' : 'user_id';
+    let baseQuery = `
+        SELECT * FROM orders
+        WHERE NOW() > created_at + INTERVAL '60 minutes' AND ${userColumn} = $1
+    `;
 
-const getOrders = async (userId, role, orderStatus, paymentStatus) => {
-    if (role == "tenant") {
-        query = `
-            SELECT * FROM orders
-            WHERE tenant_id = $1 AND order_status = $2 AND payment_status = $3
-            ORDER BY order_status_updated_at DESC, created_at DESC
-        `
-    } else {
-        query = `
-            SELECT * FROM orders
-            WHERE user_id = $1 AND order_status = $2 AND payment_status = $3
-            ORDER BY payment_status_updated_at DESC, created_at DESC
-        `
+    const values = [userId];
+
+    if (orderStatusList && orderStatusList.length > 0) {
+        baseQuery += ` AND order_status = ANY($${values.length + 1})`;
+        values.push(orderStatusList);
     }
+
+    if (paymentStatusList && paymentStatusList.length > 0) {
+        baseQuery += ` AND payment_status = ANY($${values.length + 1})`;
+        values.push(paymentStatusList);
+    }
+
+    baseQuery += ` ORDER BY created_at DESC`;
 
     try {
-        const result = await db.query(query, [userId, orderStatus, paymentStatus])
-        return result.rows
+        const result = await db.query(baseQuery, values);
+        return result.rows;
     } catch (error) {
-        console.log(error)
-        throw new Error('orders not found')
+        console.log(error);
+        throw new Error('orders not found');
     }
-}
+};
 
 const getPaymentData = async (userId, orderId) => {
     const queryTotal = `
@@ -216,6 +221,7 @@ const getQueueAttr = async (tenantId) => {
         SELECT 
             o.id AS order_id,
             o.notes,
+            o.order_status,
             o.created_at,
             u.nama AS user_name,
             oi.quantity,
@@ -224,7 +230,7 @@ const getQueueAttr = async (tenantId) => {
         JOIN users u ON o.user_id = u.id
         JOIN order_item oi ON o.id = oi.order_id
         JOIN menus m ON oi.menu_id = m.id
-        WHERE o.tenant_id = $1 AND o.order_status NOT IN ('completed', 'rejected')
+        WHERE o.tenant_id = $1 AND o.order_status NOT IN ('completed', 'rejected') AND o.payment_status IN ('settlement')
         ORDER BY o.created_at ASC
         `;
 

@@ -80,8 +80,8 @@ const getOrder = async (userId, orderId) => {
 
 
 
-const getOrders = async (userId, role, orderStatus, paymetStatus) => {
-    const orders = await orderRepository.getOrders(userId, role, orderStatus, paymetStatus)
+const getOrders = async (userId, role, orderStatusList, paymentStatusList) => {
+    const orders = await orderRepository.getOrders(userId, role, orderStatusList, paymentStatusList)
     return orders
 }
 

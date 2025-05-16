@@ -23,8 +23,11 @@ const getOrders = async (req, res) => {
         const role = req.userRole
         const orderStatus = req.query.order_status
         const paymentStatus = req.query.payment_status
+
+        const orderStatusList = orderStatus ? orderStatus.split(',') : null;
+        const paymentStatusList = paymentStatus ? paymentStatus.split(',') : null;
         
-        const orders = await orderServices.getOrders(userId, role, orderStatus, paymentStatus)
+        const orders = await orderServices.getOrders(userId, role, orderStatusList, paymentStatusList)
         return res.status(200).json(buildResponseSuccess("successfully get orders", orders));
     } catch (error) {
         return res.status(500).json(buildResponseFailed("internal server error", error.message, null));

@@ -126,6 +126,7 @@ const getQueue = async (tenantId) => {
         const {
             order_id,
             notes,
+            order_status,
             created_at,
             user_name,
             menu_name,
@@ -135,6 +136,7 @@ const getQueue = async (tenantId) => {
         if (!orderMap.has(order_id)) {
             orderMap.set(order_id, {
                 orderId: order_id,
+                order_status,
                 notes,
                 createdAt: created_at,
                 pemesan: user_name,
