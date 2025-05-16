@@ -15,6 +15,6 @@ router.get('/:id/queue', getQueue);
 router.get('/:id/queue/done', getQueue);
 
 router.get('/', getAllTenant)
-router.get('/:id', authenticate, getTenant)
+router.get('/:id', getTenant)
 
 module.exports = router;
