@@ -62,7 +62,7 @@ const getCurrentUser = async (userId) => {
 };
 
 const updateUser = async (userId, updates) => {
-    const allowedFields = ['nama', 'email', 'nomor_telepon', 'password'];
+    const allowedFields = ['nama', 'email', 'nomor_telepon', 'password', 'nrp'];
     const updateKeys = Object.keys(updates);
 
     updateKeys.forEach(key => {
