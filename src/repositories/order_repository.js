@@ -87,7 +87,7 @@ const getOrders = async (userId, role, orderStatusList, paymentStatusList) => {
     const userColumn = role === 'tenant' ? 'tenant_id' : 'user_id';
     let baseQuery = `
         SELECT * FROM orders
-        WHERE NOW() > created_at + INTERVAL '60 minutes' AND ${userColumn} = $1
+        WHERE NOW() < created_at + INTERVAL '60 minutes' AND ${userColumn} = $1
     `;
 
     const values = [userId];
@@ -105,6 +105,7 @@ const getOrders = async (userId, role, orderStatusList, paymentStatusList) => {
     baseQuery += ` ORDER BY created_at DESC`;
 
     try {
+        console.log(baseQuery, values)
         const result = await db.query(baseQuery, values);
         return result.rows;
     } catch (error) {
