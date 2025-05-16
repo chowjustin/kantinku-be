@@ -68,17 +68,51 @@ const createOrder = async (userId, items, notes) => {
 }
 
 const getOrder = async (userId, orderId) => {
-    const order = await orderRepository.getOrderById(userId, orderId);
-    if (!order) {
+    const rows = await orderRepository.getOrderById(userId, orderId);
+    if (!rows || rows.length === 0) {
         throw new Error('failed get order');
     }
 
+    const {
+        id,
+        user_id,
+        tenant_id,
+        order_status,
+        payment_status,
+        notes,
+        estimasi,
+        antrian,
+        payment_status_updated_at,
+        order_status_updated_at,
+        created_at,
+        payment_token,
+        redirect_url
+    } = rows[0];
+
+    const items = rows.map(row => ({
+        menu_name: row.menu_name,
+        quantity: row.quantity,
+    }));
+
     return {
-        order
+        order: {
+            id,
+            user_id,
+            tenant_id,
+            order_status,
+            payment_status,
+            notes,
+            estimasi,
+            antrian,
+            payment_status_updated_at,
+            order_status_updated_at,
+            created_at,
+            payment_token,
+            redirect_url,
+            items
+        }
     };
 };
-
-
 
 const getOrders = async (userId, role, orderStatusList, paymentStatusList) => {
     const orders = await orderRepository.getOrders(userId, role, orderStatusList, paymentStatusList)

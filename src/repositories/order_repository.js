@@ -77,8 +77,20 @@ const updateById = async (userId, orderId, updates) => {
 
 const getOrderById = async (userId, orderId) => {
     try {
-        const result = await db.query(`SELECT * FROM orders WHERE user_id = $1 AND id = $2`, [userId, orderId]);
-        return result.rows[0];
+        // const result = await db.query(`SELECT * FROM orders WHERE user_id = $1 AND id = $2`, [userId, orderId]);
+        const query = `
+            SELECT 
+                o.*, 
+                oi.quantity,
+                m.nama AS menu_name
+            FROM orders o
+            JOIN order_item oi ON o.id = oi.order_id
+            JOIN menus m ON oi.menu_id = m.id
+            WHERE o.id = $1
+        `;
+
+        const result = await db.query(query, [orderId]);
+        return result.rows;
     } catch (error) {
         throw new Error('order not found')
     }
