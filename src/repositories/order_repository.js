@@ -67,7 +67,6 @@ const updateById = async (userId, orderId, updates) => {
 
     try {
         const result = await db.query(query, values);
-        console.log(fields, values, result.rows[0])
         return result.rows[0];
     } catch (error) {
         throw new Error("failed update order");

@@ -61,7 +61,7 @@ CREATE TABLE menus (
 );
 
 CREATE TABLE orders (
-    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL,
     tenant_id UUID NOT NULL,
     order_status status_order NOT NULL DEFAULT 'pending',
@@ -81,7 +81,7 @@ CREATE TABLE orders (
 );
 
 CREATE TABLE order_item (
-    order_id INTEGER NOT NULL,
+    order_id UUID NOT NULL,
     menu_id UUID NOT NULL,
     quantity INTEGER NOT NULL,
 
